@@ -1,1 +1,1 @@
-# lighter - A language written in C
+# lighter - A language written in C++
