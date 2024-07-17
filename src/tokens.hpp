@@ -1,4 +1,3 @@
-#include <ppltasks.h>
 namespace Parser
 {
 namespace Tokens
@@ -21,10 +20,10 @@ enum class TokenType
     /// Holds an expression to check, as well as a block to execute.
     If,
 };
-}  // namespace Tokens
+} // namespace Tokens
 
 struct Token
 {
     Tokens::TokenType type;
 };
-}  // namespace Parser
+} // namespace Parser

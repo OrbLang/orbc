@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-
 #include "ast.hpp"
+
+#include <string>
 
 namespace Parser
 {
@@ -13,11 +13,11 @@ enum class Status
 
 class TokenParser
 {
-   private:
-    std::string _currBuffer = "";
+private:
+    std::string _currBuffer;
     Ast::AstToken _tokenTree;
 
-   public:
+public:
     TokenParser();
 
     void ParseNext(char currChar, char nextChar);
@@ -25,4 +25,4 @@ class TokenParser
     Ast::AstToken GetAST();
 };
 
-}  // namespace Parser
+} // namespace Parser

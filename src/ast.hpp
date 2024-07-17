@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstring>
 #include <memory>
 #include <string>
+#include <typeinfo>
 
 typedef std::string ident_t;
 
@@ -70,24 +72,53 @@ enum class Operator
 union ExprValue
 {
     double number;
-    std::string name;
+    const char* const name;
     Operator op;
 };
 
 class AstToken
 {
-   public:
+public:
     ExprType type;
     ExprValue value;
     std::shared_ptr<AstToken> lhs;
     std::shared_ptr<AstToken> rhs;
 
-    /// Create a HEAD token
-    AstToken();
+    AstToken() = default;
 
     /// Create a new AstToken with a defined type and value
     template <typename T>
-    AstToken(ExprType tokenType, T tokenValue);
+    AstToken(ExprType exprType, T tokenValue)
+    {
+        type = exprType;
+        switch (type)
+        {
+        case ExprType::Head:
+            // Set `value` to zero, since its not needed
+            value.number = 0.0;
+            break;
+        case ExprType::BinOp:
+            value.op = tokenValue;
+            break;
+        case ExprType::Cmp:
+            value.op = tokenValue;
+            break;
+        case ExprType::Assign:
+            // Set `value` to zero, since its not needed
+            value.number = 0.0;
+            break;
+        case ExprType::Identifier:
+            value.name = tokenValue;
+            break;
+        case ExprType::ConstantNum:
+            value.number = tokenValue;
+            break;
+        case ExprType::Call:
+            // Set `value` to zero, since its not needed
+            value.number = 0.0;
+            break;
+        };
+    }
 };
-}  // namespace Ast
-};  // namespace Parser
+} // namespace Ast
+} // namespace Parser

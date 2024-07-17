@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Parser::TokenParser::TokenParser() : _tokenTree{Ast::AstToken()} {}
+Parser::TokenParser::TokenParser() : _currBuffer{""}, _tokenTree{Ast::AstToken()} {}
 
 void Parser::TokenParser::ParseNext(char currChar, char nextChar)
 {
