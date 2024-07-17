@@ -1,9 +1,7 @@
 #pragma once
 
-#include <cstring>
 #include <memory>
 #include <string>
-#include <typeinfo>
 
 typedef std::string ident_t;
 
@@ -11,7 +9,6 @@ namespace Parser
 {
 namespace Ast
 {
-
 enum class ExprType
 {
     /// The head of the tree, or the entry point
@@ -68,57 +65,60 @@ enum class Operator
     Not,
 };
 
-/// The value behind an AST token.
-union ExprValue
-{
-    double number;
-    const char* const name;
-    Operator op;
-};
-
-class AstToken
+// ExprToken Interface;
+// An ExprTken is a token that can be evaluated to a value.
+// Like `5 + 5` can be evaluated to `10`.
+// Statements do not lie under here, as `int foo;` can't be evaluated to a number.
+class ExprToken
 {
 public:
-    ExprType type;
-    ExprValue value;
-    std::shared_ptr<AstToken> lhs;
-    std::shared_ptr<AstToken> rhs;
-
-    AstToken() = default;
-
-    /// Create a new AstToken with a defined type and value
-    template <typename T>
-    AstToken(ExprType exprType, T tokenValue)
-    {
-        type = exprType;
-        switch (type)
-        {
-        case ExprType::Head:
-            // Set `value` to zero, since its not needed
-            value.number = 0.0;
-            break;
-        case ExprType::BinOp:
-            value.op = tokenValue;
-            break;
-        case ExprType::Cmp:
-            value.op = tokenValue;
-            break;
-        case ExprType::Assign:
-            // Set `value` to zero, since its not needed
-            value.number = 0.0;
-            break;
-        case ExprType::Identifier:
-            value.name = tokenValue;
-            break;
-        case ExprType::ConstantNum:
-            value.number = tokenValue;
-            break;
-        case ExprType::Call:
-            // Set `value` to zero, since its not needed
-            value.number = 0.0;
-            break;
-        };
-    }
+    // Holds the type of the expressions value, e.g. `int`, `Entry::Foo`.
+    const char* type;
+    // Generates an LLVM value for the expression token.
+    // virtual Value GetIRValue() = 0;
+    // Commented as we do not have the LLVM librabry, which
+    // includes Value, imported yet.
 };
-} // namespace Ast
-} // namespace Parser
+
+// Performs an operator on two expressions (`lhs` & `rhs`). E.g. `lhs + rhs`
+class OperatorToken : ExprToken
+{
+private:
+    // The operator, like `>`, `||`, `-`, and such.
+    Operator _op;
+    // The left hand side value.
+    std::unique_ptr<ExprToken> _lhs;
+    // THe right hand side value.
+    std::unique_ptr<ExprToken> _rhs;
+};
+
+// Holds a constant number.
+class NumberToken : ExprToken
+{
+private:
+    // The constants value. E.g. `5`.
+    double _number;
+};
+
+// Holds an identifier for a variable.
+class VariableToken : ExprToken
+{
+private:
+    // The variables name/identifier. E.g. `foo`.
+    const char* _identifier;
+};
+
+// Calls a function.
+class FuncCallToken : ExprToken
+{
+private:
+    // The name/identifier of the function.
+    const char* _identifier;
+    // The parameters.
+    const ExprToken* _paramIdents;
+    // The number of parameters passed.
+    int _paramCount;
+};
+
+}; // namespace Ast
+}; // namespace Parser
