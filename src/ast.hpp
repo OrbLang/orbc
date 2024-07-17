@@ -62,7 +62,29 @@ enum class Operator
     /// Same as `==`
     Equal,
     /// Same as `!`
-    Not,
+    LogicalNot,
+    /// Same as `&&`
+    LogicalAnd,
+    /// Same as `||`
+    LogicalOr,
+    /// Same as `^^` (New operator)
+    LogicalXor,
+    /// Same as `<<`
+    BitShiftL,
+    /// Same as `>>`
+    BitShiftR,
+    /// Same as `|`
+    BitOr,
+    /// Same as `&`
+    BitAnd,
+    /// Same as `^`
+    BitXor,
+    /// Same as `~`
+    BitNot,
+};
+
+class AstToken
+{
 };
 
 // ExprToken Interface;
@@ -85,11 +107,11 @@ class OperatorToken : ExprToken
 {
 private:
     // The operator, like `>`, `||`, `-`, and such.
-    Operator _op;
+    Operator op;
     // The left hand side value.
-    std::unique_ptr<ExprToken> _lhs;
+    std::unique_ptr<ExprToken> lhs;
     // THe right hand side value.
-    std::unique_ptr<ExprToken> _rhs;
+    std::unique_ptr<ExprToken> rhs;
 };
 
 // Holds a constant number.
@@ -97,7 +119,7 @@ class NumberToken : ExprToken
 {
 private:
     // The constants value. E.g. `5`.
-    double _number;
+    double number;
 };
 
 // Holds an identifier for a variable.
@@ -105,7 +127,7 @@ class VariableToken : ExprToken
 {
 private:
     // The variables name/identifier. E.g. `foo`.
-    const char* _identifier;
+    const char* identifier;
 };
 
 // Calls a function.
@@ -113,12 +135,81 @@ class FuncCallToken : ExprToken
 {
 private:
     // The name/identifier of the function.
-    const char* _identifier;
+    const char* identifier;
     // The parameters.
-    const ExprToken* _paramIdents;
+    const std::unique_ptr<ExprToken>* paramExprs;
     // The number of parameters passed.
-    int _paramCount;
+    int paramCount;
 };
+
+class StatementToken
+{
+};
+
+// Holds a block of tokens. Both `ExprTokens` and `StatementToken` are valid.
+class BlockToken : StatementToken
+{
+private:
+    // A list of tokens to run from left to right, therefore First in, first out.
+    const std::unique_ptr<AstToken>* tokens;
+    // The amount of tokens in the token list.
+    int tokenCount;
+
+public:
+    // Push a token to the block.
+    void PushTok(std::unique_ptr<AstToken> token);
+};
+
+// Declare a new variable.
+class VariableDeclToken : StatementToken
+{
+private:
+    // The name/identifier of the new variable.
+    const char* identifier;
+    // The variables type.
+    const char* type;
+    // If the variable is assigned a value.
+    bool isAssigned;
+    // The expression that the variable is assigned with, if `isAssigned = true`.
+    std::unique_ptr<ExprToken> value;
+};
+
+// Declare a new function.
+class FunctionDeclToken : StatementToken
+{
+private:
+    // The name/identifier of the new variable.
+    const char* identifier;
+    // The type that the function will return.
+    const char* returnType;
+    // The identifiers of the functions parameters.
+    const char** paramIdents;
+    // The types of the functions parameters.
+    const char** paramTypes;
+    // The block which holds the tokens in the function.
+    std::unique_ptr<BlockToken> block;
+};
+
+// Create an if statement.
+class IfToken : StatementToken
+{
+private:
+    // The condition.
+    std::unique_ptr<ExprToken> condition;
+    // The block which is run if the condition is evaluated to true.
+    std::unique_ptr<BlockToken> block;
+};
+
+// Create a while loop.
+class WhileLoopToken : StatementToken
+{
+private:
+    // The run condition.
+    std::unique_ptr<ExprToken> condition;
+    // The block which is run for each iteration.
+    std::unique_ptr<BlockToken> block;
+};
+
 
 }; // namespace Ast
 }; // namespace Parser
