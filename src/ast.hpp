@@ -24,7 +24,7 @@ enum class Operator
     /// Same as `%`
     Mod,
 
-    /*  COMPARISON  */
+    /*  COMPARISON / LOGICAL */
     /// Same as `>`
     GreaterThan,
     /// Same as `>=`
@@ -167,6 +167,16 @@ private:
     std::unique_ptr<ExprNode> value;
 };
 
+// Assign/Reassign a value to a variable.
+class AssignVariableNode : public StatementNode
+{
+private:
+    // The name/identifier of the new variable.
+    const char* identifier;
+    // The expression that the variable is assigned to.
+    std::unique_ptr<ExprNode> value;
+};
+
 // Declare a new function.
 class DeclFunctionNode : public StatementNode
 {
@@ -202,7 +212,6 @@ private:
     // The block which is run for each iteration.
     std::unique_ptr<BlockNode> block;
 };
-
 
 }; // namespace Ast
 }; // namespace Parser
