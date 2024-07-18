@@ -24,7 +24,9 @@ enum class TokenType
     /// If it has a condition it also holds a body
     Statement,
     /// A type like an integer or floating point
-    Type
+    Type,
+    /// A number like 4 or 3.14
+    Constant,
 };
 
 } // namespace Tokens
