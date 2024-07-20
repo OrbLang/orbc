@@ -1,0 +1,24 @@
+CompileFlags:
+  Add: [-std=c++23]
+
+Diagnostics:
+  Includes:
+    MissingIncludes: None
+  ClangTidy:
+    Add: 'bugprone-*'
+    Add: 'cppcoreguidelines-*'
+    Add: 'modernize-*'
+    Add: 'performance-*'
+    Add: 'readability-*'
+    Remove: 'bugprone-easily-swappable-parameters'
+
+InlayHints:
+  BlockEnd: No
+  Designators: Yes
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+  TypeNameLimit: 24
+
+Index:
+  Background: Build
