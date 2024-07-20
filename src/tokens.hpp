@@ -1,25 +1,34 @@
+#pragma once
+
 namespace Parser
 {
 namespace Tokens
 {
 enum class TokenType
 {
+    /// A variable, function or class name
+    Identifier,
     /// Declare a variable.
     /// Holds an identifier.
-    VarDecl,
-    /// Assign a value to a variable.
-    /// Holds an identifier and an Expression.
-    Assign,
+    CreateVar,
     /// Creates a function.
     /// Holds an identifier, list of params, and a block to execute.
-    FuncDecl,
+    CreateFunc,
+    /// Assign a value to a variable.
+    /// Holds an identifier and an Expression.
+    Operator,
     /// Calls a function.
     /// Holds an identifier, and a list of expressions to use as params.
-    FuncCall,
-    /// Makes an if statement.
-    /// Holds an expression to check, as well as a block to execute.
-    If,
+    CallFunc,
+    /// A statement fx. If, Else, While...
+    /// If it has a condition it also holds a body
+    Statement,
+    /// A type like an integer or floating point
+    Type,
+    /// A number like 4 or 3.14
+    Constant,
 };
+
 } // namespace Tokens
 
 struct Token
