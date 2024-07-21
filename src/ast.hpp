@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 typedef std::string ident_t;
 
@@ -130,7 +131,7 @@ private:
     // The name/identifier of the function.
     const char* identifier;
     // The parameters.
-    const std::unique_ptr<ExprNode>* paramExprs;
+    std::vector<std::unique_ptr<ExprNode>> paramExprs;
     // The number of parameters passed.
     int paramCount;
 };
@@ -144,9 +145,7 @@ class BlockNode : public StatementNode
 {
 private:
     // A list of nodes to run from left to right, therefore First in, first out.
-    const std::unique_ptr<AstNode>* nodes;
-    // The amount of nodes in the nodes list.
-    int nodeCount;
+    std::vector<std::unique_ptr<AstNode>> nodes;
 
 public:
     // Push a node to the block.
@@ -186,9 +185,9 @@ private:
     // The type that the function will return.
     const char* returnType;
     // The identifiers of the functions parameters.
-    const char** paramIdents;
+    std::vector<const char*> paramIdents;
     // The types of the functions parameters.
-    const char** paramTypes;
+    std::vector<const char*> paramTypes;
     // The block which holds the nodes in the function.
     std::unique_ptr<BlockNode> block;
 };
