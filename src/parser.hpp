@@ -15,14 +15,14 @@ class TokenParser
 {
 private:
     std::string _currBuffer;
-    Ast::AstToken _tokenTree;
+    Ast::AstNode _tokenTree;
 
 public:
     TokenParser();
 
     void ParseNext(char currChar, char nextChar);
 
-    Ast::AstToken GetAST();
+    Ast::AstNode GetAST();
 };
 
 } // namespace Parser
