@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <string>
-namespace Parser
+namespace parser
 {
 namespace types
 {
@@ -64,4 +64,4 @@ enum class OrbType
 };
 
 } // namespace types
-} // namespace Parser
+} // namespace parser

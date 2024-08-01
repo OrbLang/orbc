@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Parser
+namespace parser
 {
-namespace Tokens
+namespace tokens
 {
 enum class TokenType
 {
@@ -27,12 +27,14 @@ enum class TokenType
     Type,
     /// A number like 4 or 3.14
     Constant,
+    /// Indicating the end of a file
+    Eof,
 };
 
-} // namespace Tokens
+} // namespace tokens
 
 struct Token
 {
-    Tokens::TokenType type;
+    tokens::TokenType type;
 };
-} // namespace Parser
+} // namespace parser

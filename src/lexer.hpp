@@ -9,7 +9,7 @@
 #include <variant>
 
 
-namespace Parser
+namespace parser
 {
 
 class Lexer
@@ -23,14 +23,14 @@ private:
     std::string identifier;
     numberVariant number;
     types::OrbType type;
-    Ast::Operator op;
+    ast::Operator op;
     std::ifstream::pos_type prevTokPos;
 
 public:
     Lexer(const char* path);
 
-    Tokens::TokenType NextToken();
-    Ast::Operator GetOperator();
+    tokens::TokenType NextToken();
+    ast::Operator GetOperator();
     std::string GetIdentifier();
     types::OrbType GetType();
     numberVariant GetNumber();
@@ -43,4 +43,4 @@ private:
     /* bool NextOperator(); */
 };
 
-} // namespace Parser
+} // namespace parser
