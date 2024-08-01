@@ -11,28 +11,30 @@
 
 namespace parser
 {
+using numberVariant = std::variant<int8_t, int16_t, int32_t, int64_t, float, double, long double>;
 
 class Lexer
 {
 public:
-    typedef std::variant<int8_t, int16_t, int32_t, int64_t, float, double, long double>
-        numberVariant;
+    struct TokenData
+    {
+    };
 
 private:
     std::ifstream filestream;
     std::string identifier;
     numberVariant number;
-    types::OrbType type;
-    ast::Operator op;
+    Type type;
+    Ast::Operator op;
     std::ifstream::pos_type prevTokPos;
 
 public:
     Lexer(const char* path);
 
-    tokens::TokenType NextToken();
-    ast::Operator GetOperator();
+    TokenData NextToken();
+    Ast::Operator GetOperator();
     std::string GetIdentifier();
-    types::OrbType GetType();
+    Type GetType();
     numberVariant GetNumber();
 
 
