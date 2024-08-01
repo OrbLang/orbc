@@ -6,7 +6,8 @@ project('orb', 'cpp',
 sources = files()
 subdir('src')
 
-executable('lighter',
+executable('orb',
+           'src/main.cpp',
            sources,
            install : true)
 
