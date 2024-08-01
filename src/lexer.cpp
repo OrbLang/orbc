@@ -9,10 +9,10 @@
 #include <iostream>
 #include <string>
 
-using namespace Parser;
+using namespace parser;
 
 Lexer::Lexer(const char* path)
-        : filestream{std::ifstream{path}}, identifier{std::string{""}}, op{Ast::Operator::Add},
+        : filestream{std::ifstream{path}}, identifier{std::string{""}}, op{ast::Operator::Add},
           prevTokPos(filestream.tellg())
 {
 }
@@ -137,5 +137,5 @@ Lexer::TokenData Lexer::NextToken()
     /*     return TokenType::Constant; */
 }
 
-Ast::Operator Lexer::GetOperator() {}
+ast::Operator Lexer::GetOperator() {}
 std::string Lexer::GetIdentifier() {}

@@ -1,10 +1,8 @@
 #pragma once
 
 #include "ast.hpp"
-#include "tokens.hpp"
 #include "types.hpp"
 
-#include <climits>
 #include <fstream>
 #include <variant>
 
@@ -25,14 +23,14 @@ private:
     std::string identifier;
     numberVariant number;
     Type type;
-    Ast::Operator op;
+    ast::Operator op;
     std::ifstream::pos_type prevTokPos;
 
 public:
     Lexer(const char* path);
 
     TokenData NextToken();
-    Ast::Operator GetOperator();
+    ast::Operator GetOperator();
     std::string GetIdentifier();
     Type GetType();
     numberVariant GetNumber();

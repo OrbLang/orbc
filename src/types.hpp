@@ -7,7 +7,7 @@ namespace parser
 
 enum class Type
 {
-    // Integers
+    /*  Integers  */
 
     /// i8
     R8,
@@ -20,6 +20,8 @@ enum class Type
     /// i64
     R64,
 
+    /*  Floats  */
+
     /// f32
     F32,
     /// Standard Floating Point
@@ -29,6 +31,8 @@ enum class Type
     /// f128
     F128,
 
+    /*  Others  */
+
     /// Character
     Glyph,
     /// String
@@ -36,7 +40,8 @@ enum class Type
     /// Boolean
     Sigil,
 
-    // Special types
+    /*  Object types  */
+
     /// Class
     Artifact,
     /// Interface

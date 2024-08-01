@@ -1,9 +1,5 @@
 #include "ast.hpp"
 #include "lexer.hpp"
-#include "tokens.hpp"
-
-#include <iostream>
-#include <vector>
 
 namespace parser
 {
@@ -13,10 +9,7 @@ ast::BlockNode ParseToAST(const char* path)
 
     Lexer lexer(path);
 
-    tokens::TokenType nextToken = lexer.NextToken();
-    while (nextToken != tokens::TokenType::Eof)
-    {
-    }
+    Lexer::TokenData nextToken = lexer.NextToken();
 
     // return traceback[0];
 }
