@@ -2,14 +2,12 @@
 
 #include "ast.hpp"
 #include "tokens.hpp"
-#include "types.hpp"
 
 #include <cctype>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <utility>
 
 using namespace Parser;
 
@@ -56,17 +54,17 @@ bool Lexer::NextNumber()
     std::string numberStr{};
     numberStr = filestream.get();
 
-    type = numberStr == "." ? OrbType::Flow : OrbType::Rune;
+    type = numberStr == "." ? Type::Flow : Type::Rune;
     while (IsValidNumberChar(filestream.peek()))
     {
         const char currChar = filestream.get();
         // Return error: too many `.` characters in number
-        if (currChar == '.' && type == OrbType::Flow)
+        if (currChar == '.' && type == Type::Flow)
             return false;
 
         // First `.` character found
-        if (currChar == '.' && type == OrbType::Rune)
-            type = OrbType::Flow;
+        if (currChar == '.' && type == Type::Rune)
+            type = Type::Flow;
 
         numberStr += currChar;
     }
@@ -88,9 +86,9 @@ bool Lexer::NextNumber()
     // I'm keeping it
 
     // Add more type detection in the future (With specific types like R8 and F64)
-    if (type == OrbType::Rune)
+    if (type == Type::Rune)
         number = stoi(numberStr);
-    else if (type == OrbType::Flow)
+    else if (type == Type::Flow)
         number = stof(numberStr);
 
     return true;
@@ -104,39 +102,39 @@ bool Lexer::NextNumber()
 /* } */
 
 // Needs to return error
-Tokens::TokenType Lexer::NextToken()
+Lexer::TokenData Lexer::NextToken()
 {
-    using namespace Tokens;
     SkipWhitespace();
-
-    // Identifiers like keywords and variable / function names
-    if (NextIdentifier())
-    {
-        if (identifier == "cast")
-            return TokenType::CallFunc;
-
-        if (identifier == "create")
-        {
-            if (!NextIdentifier())
-                std::cerr << "Invalid character after 'create' keyword: \"" << filestream.peek()
-                          << '\"';
-
-            if (identifier == "spell")
-                return TokenType::CreateFunc;
-
-            // We want a seperate call to get the Identifier
-            // hence we roll back the filestream to the `create` keyword
-            filestream.seekg(prevTokPos);
-
-            return TokenType::CreateVar;
-        }
-
-        return TokenType::Identifier;
-    }
-
-    // Integers and floats
-    if (NextNumber())
-        return TokenType::Constant;
+    /**/
+    /* // Identifiers like keywords and variable / function names */
+    /* if (NextIdentifier()) */
+    /* { */
+    /*     if (identifier == "cast") */
+    /*         return TokenType::CallFunc; */
+    /**/
+    /*     if (identifier == "create") */
+    /*     { */
+    /*         if (!NextIdentifier()) */
+    /*             std::cerr << "Invalid character after 'create' keyword: \"" << filestream.peek()
+     */
+    /*                       << '\"'; */
+    /**/
+    /*         if (identifier == "spell") */
+    /*             return TokenType::CreateFunc; */
+    /**/
+    /*         // We want a seperate call to get the Identifier */
+    /*         // hence we roll back the filestream to the `create` keyword */
+    /*         filestream.seekg(prevTokPos); */
+    /**/
+    /*         return TokenType::CreateVar; */
+    /*     } */
+    /**/
+    /*     return TokenType::Identifier; */
+    /* } */
+    /**/
+    /* // Integers and floats */
+    /* if (NextNumber()) */
+    /*     return TokenType::Constant; */
 }
 
 Ast::Operator Lexer::GetOperator() {}
