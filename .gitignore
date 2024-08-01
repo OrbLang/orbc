@@ -1,3 +1,11 @@
+# Clangd
+.cache/clangd/
+
+compile_commands.json
+
+# Build Directory
+# builddir/
+
 # Prerequisites
 *.d
 
