@@ -4,12 +4,24 @@
 #include "tokens.hpp"
 
 #include <cctype>
+#include <concepts>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
 #include <string>
 
 using namespace parser;
+
+/// Helper function to cast `int` return type to `char` when using peek function
+static inline char peek(std::basic_ifstream<char>& stream)
+{
+    return static_cast<char>(stream.peek());
+}
+/// Helper function to cast `int` return type to `char` when using get function
+static inline char get(std::basic_ifstream<char>& stream)
+{
+    return static_cast<char>(stream.get());
+}
 
 Lexer::Lexer(const char* path)
         : filestream{std::ifstream{path}}, identifier{std::string{""}}, op{ast::Operator::Add},
@@ -20,24 +32,24 @@ Lexer::Lexer(const char* path)
 void Lexer::SkipWhitespace()
 {
     prevTokPos = filestream.tellg();
-    while (isspace(filestream.peek()))
-        filestream.get();
+    while (isspace(peek(filestream)))
+        get(filestream);
 }
 
 // Needs to return Error
 bool Lexer::NextIdentifier()
 {
     SkipWhitespace();
-    char nextChar = filestream.peek();
+    char nextChar = static_cast<char>(peek(filestream));
 
     // If the next identifier is a special character
     if (!isalpha(nextChar) || nextChar == '_')
         return false;
 
-    identifier = filestream.get();
-    nextChar = filestream.peek();
+    identifier = get(filestream);
+    nextChar = peek(filestream);
     while (isalnum(nextChar) || nextChar == '_')
-        identifier += filestream.get();
+        identifier += get(filestream);
 
     return true;
 }
@@ -48,16 +60,16 @@ bool Lexer::NextNumber()
     using namespace types;
     auto IsValidNumberChar = [](const char c) { return isdigit(c) || c == '.'; };
 
-    if (!IsValidNumberChar(filestream.peek()))
+    if (!IsValidNumberChar(peek(filestream)))
         return false;
 
     std::string numberStr{};
-    numberStr = filestream.get();
+    numberStr = get(filestream);
 
     type = numberStr == "." ? Type::Flow : Type::Rune;
-    while (IsValidNumberChar(filestream.peek()))
+    while (IsValidNumberChar(peek(filestream)))
     {
-        const char currChar = filestream.get();
+        const char currChar = get(filestream);
         // Return error: too many `.` characters in number
         if (currChar == '.' && type == Type::Flow)
             return false;
@@ -70,7 +82,7 @@ bool Lexer::NextNumber()
     }
 
     // Return error: Invalid symbol in number
-    if (!isspace(filestream.peek()))
+    if (!isspace(peek(filestream)))
         return false;
 
     // If number begins with a `.` insert a 0 in front
@@ -98,7 +110,7 @@ bool Lexer::NextNumber()
 /* bool Lexer::NextOperator() */
 /* { */
 /*     SkipWhitespace(); */
-/*     char nextChar = filestream.peek(); */
+/*     char nextChar = peek(filestream); */
 /* } */
 
 // Needs to return error
