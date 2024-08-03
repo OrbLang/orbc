@@ -1,5 +1,4 @@
 #include <ostream>
-#include <ppltasks.h>
 namespace logging
 {
 
