@@ -1,1 +1,1 @@
-sources += files('ast.cpp', 'main.cpp', 'parser.cpp')
+sources += files('ast.cpp', 'parser.cpp')
