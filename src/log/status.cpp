@@ -3,59 +3,76 @@
 #include "color.hpp"
 #include "log.hpp"
 
+#include <algorithm>
 #include <cmath>
-#include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <string_view>
 #include <vector>
 
 namespace logging
 {
-std::vector<LoadingBar::LoadingBarData> LoadingBar::loadingbarList = {};
+static std::vector<LoadingBar*> loadingbarList{};
 
-size_t LoadingBar::Insert(std::string_view name, float percent, std::string_view currentTask)
+LoadingBar::LoadingBar(std::string_view name, float percent, std::string_view description,
+                       bool deleteBar)
+        : percent{percent}, name{name}, description{description}, rowNum{m_totalLineCount},
+          deleteBar{deleteBar}
 {
-    LoadingBarData bar{.percent = percent,
-                       .name = name,
-                       .currentTask = currentTask,
-                       .rowNum = m_totalLineCount + 1};
-
-    loadingbarList.push_back(bar);
-
-    size_t index = loadingbarList.size() - 1;
-
-    Draw(index);
-
+    loadingbarList.push_back(this);
     m_totalLineCount += 1;
 
-    return index;
+    Draw();
 }
 
-void LoadingBar::UpdateBar(size_t index, float percent, std::string_view currentTask)
+LoadingBar::~LoadingBar(void)
 {
-    LoadingBarData& bar = loadingbarList.at(index);
+    loadingbarList.erase(std::find(loadingbarList.begin(), loadingbarList.end(), this));
 
-    bar.percent = percent;
-    bar.currentTask = currentTask;
-
-    Draw(index);
-}
-
-void LoadingBar::Draw(size_t index)
-{
-    LoadingBarData& bar = loadingbarList[index];
+    if (!deleteBar)
+        return;
 
     // Saves the cursors current position.
     std::cout << "\x1b[s";
 
     // Moves the cursor to column `0`, and moves it up to the the loading bar's position
-    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - bar.rowNum << "F";
+    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - rowNum << "F";
+}
+
+void LoadingBar::UpdateBar(float percent, std::string_view description)
+{
+    this->percent = percent;
+    this->description = description;
+
+    Draw();
+}
+
+void LoadingBar::UpdatePercent(float percent)
+{
+    this->percent = percent;
+
+    Draw();
+}
+void LoadingBar::UpdateDescription(std::string_view description)
+{
+    this->description = description;
+
+    Draw();
+}
+
+void LoadingBar::Draw()
+{
+    // Saves the cursors current position.
+    std::cout << "\x1b[s";
+
+    // Moves the cursor to column `0`, and moves it up to the the loading bar's position
+    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - rowNum << "F";
 
 
     std::string barString = "[";
 
     // Get the amount of filled chars in the bar
-    uint8_t length = std::floor(static_cast<float>(barLength) * (bar.percent / 100));
+    uint8_t length = std::floor(static_cast<float>(barLength) * (percent / 100));
 
     // Sets the filled chars in the bar
     barString += std::string(length, '#');
@@ -72,8 +89,8 @@ void LoadingBar::Draw(size_t index)
     std::cout << "\x1b[2K";
 
     // print the bar
-    std::cout << " - " << nameColor << bar.name << " \t" << barColor << barString << '('
-              << bar.percent << "%)" << noColor << ": " << bar.currentTask << std::endl;
+    std::cout << " - " << nameColor << name << " \t" << barColor << barString << '(' << percent
+              << "%)" << noColor << ": " << description << std::endl;
 
     // Revert the cursor to the last saved position
     std::cout << "\x1b[u";

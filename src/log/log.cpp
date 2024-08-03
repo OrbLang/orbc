@@ -9,8 +9,6 @@
 
 using namespace logging::color;
 
-int logging::m_totalLineCount = 0;
-
 void logging::m_UpdateLineCount(std::string_view string)
 {
     int newLines = static_cast<int>(std::ranges::count(string, '\n'));

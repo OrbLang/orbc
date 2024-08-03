@@ -1,1 +1,2 @@
+subdir('log')
 subdir('parser')

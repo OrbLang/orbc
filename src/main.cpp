@@ -3,12 +3,11 @@
 
 int main()
 {
-    size_t testingIdx = logging::LoadingBar::Insert("Lexing", 0.0, "Complete");
-    size_t otherIdx = logging::LoadingBar::Insert("Parsing", 75.0, "Other crazy shit");
+    logging::LoadingBar testingIdx{"Lexing", 0.0f, "Complete", false};
 
     logging::Error("I will now change \"Test\" to 40%\nhello");
 
-    logging::LoadingBar::UpdateBar(testingIdx, 40.0, "eyo");
+    testingIdx.UpdateBar(40.0f, "eyo");
 
     // size_t fileIdx = logging::LoadingBar::Insert("Curr File", 0.0, "Compiling");
     // size_t TotalIdx = logging::LoadingBar::Insert("Total", 0.0, "Man this is a lot of files");

@@ -6,7 +6,7 @@
 
 namespace logging
 {
-extern int m_totalLineCount;
+inline int m_totalLineCount;
 
 void m_UpdateLineCount(std::string_view string);
 
