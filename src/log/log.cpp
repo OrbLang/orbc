@@ -2,20 +2,39 @@
 
 #include "color.hpp"
 
+#include <algorithm>
 #include <iostream>
+#include <ostream>
+#include <string_view>
 
-void logging::Error(const char* msg)
+using namespace logging::color;
+
+int logging::m_totalLineCount = 0;
+
+void logging::m_UpdateLineCount(std::string_view string)
 {
-    color::Modifier red{color::Color::FgRed, color::Effect::Bold};
-    color::Modifier reset{color::Color::FgDefault, color::Effect::None};
+    int newLines = static_cast<int>(std::ranges::count(string, '\n'));
 
-    std::cerr << red << "[ERROR]: " << msg << reset << std::endl;
+    m_totalLineCount += 1 + newLines;
 }
 
-void logging::Warn(const char* msg)
+void logging::Error(std::string_view msg, std::ostream& stream)
+{
+    void Error(std::string_view msg, std::ostream& stream = std::cerr);
+    color::Modifier red{Color::FgRed, color::Effect::Bold};
+    color::Modifier reset{color::Color::FgDefault, color::Effect::None};
+
+    stream << red << "[ERROR]: " << msg << reset << std::endl;
+
+    m_UpdateLineCount(msg);
+}
+
+void logging::Warn(std::string_view msg, std::ostream& stream)
 {
     color::Modifier red{color::Color::FgYellow, color::Effect::Bold};
     color::Modifier reset{color::Color::FgDefault, color::Effect::None};
 
-    std::cerr << red << "[WARNING]: " << msg << reset << std::endl;
+    stream << red << "[WARNING]: " << msg << reset << std::endl;
+
+    m_UpdateLineCount(msg);
 }

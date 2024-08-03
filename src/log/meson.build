@@ -1,1 +1,1 @@
-sources += files('log.cpp')
+sources += files('log.cpp', 'status.cpp')
