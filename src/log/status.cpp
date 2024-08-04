@@ -20,7 +20,9 @@ LoadingBar::LoadingBar(std::string_view name, float percent, std::string_view de
           deleteBar{deleteBar}
 {
     loadingbarList.push_back(this);
+
     m_totalLineCount += 1;
+    std::cout << "\n";
 
     Draw();
 }
@@ -66,7 +68,7 @@ void LoadingBar::Draw()
     std::cout << "\x1b[s";
 
     // Moves the cursor to column `0`, and moves it up to the the loading bar's position
-    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - rowNum << "F";
+    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - rowNum << "A";
 
 
     std::string barString = "[";
