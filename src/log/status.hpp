@@ -24,7 +24,7 @@ private:
     int rowNum;
     bool deleteBar;
 
-    static constexpr uint8_t barLength = 10;
+    static constexpr uint8_t barLength = 20;
     void Draw();
 };
 

@@ -79,7 +79,7 @@ void LoadingBar::Draw()
     // Sets the filled chars in the bar
     barString += std::string(length, '#');
     // Sets the remaining chars in the bar
-    barString += std::string(barLength - length, ' ');
+    barString += std::string(barLength - length, '.');
 
     barString += "]";
 
