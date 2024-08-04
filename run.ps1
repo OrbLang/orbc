@@ -1,0 +1,3 @@
+./compile.sh
+./builddir/orb
+
