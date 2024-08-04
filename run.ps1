@@ -1,3 +1,2 @@
-./compile.sh
+./compile
 ./builddir/orb
-
