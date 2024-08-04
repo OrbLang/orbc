@@ -1,6 +1,7 @@
 #include "status.hpp"
 
 #include "color.hpp"
+#define LOGGING_LIB
 #include "log.hpp"
 
 #include <algorithm>
@@ -16,12 +17,10 @@ static std::vector<LoadingBar*> loadingbarList{};
 
 LoadingBar::LoadingBar(std::string_view name, float percent, std::string_view description,
                        bool deleteBar)
-        : percent{percent}, name{name}, description{description}, rowNum{m_totalLineCount},
+        : percent{percent}, name{name}, description{description}, rowNum{totalLineCount++},
           deleteBar{deleteBar}
 {
     loadingbarList.push_back(this);
-
-    m_totalLineCount += 1;
     std::cout << "\n";
 
     Draw();
@@ -38,7 +37,7 @@ LoadingBar::~LoadingBar(void)
     std::cout << "\x1b[s";
 
     // Moves the cursor to column `0`, and moves it up to the the loading bar's position
-    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - rowNum << "F";
+    std::cout << "\x1b[0G\x1b[" << totalLineCount - rowNum << "F";
 }
 
 void LoadingBar::UpdateBar(float percent, std::string_view description)
@@ -68,7 +67,7 @@ void LoadingBar::Draw()
     std::cout << "\x1b[s";
 
     // Moves the cursor to column `0`, and moves it up to the the loading bar's position
-    std::cout << "\x1b[0G\x1b[" << m_totalLineCount - rowNum << "A";
+    std::cout << "\x1b[0G\x1b[" << totalLineCount - rowNum << "A";
 
 
     std::string barString = "[";

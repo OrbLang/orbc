@@ -1,6 +1,18 @@
 #include "log/log.hpp"
 #include "log/status.hpp"
 
+#include <thread>
+
+int bru() {}
+
+int foo() {}
+
+int bar() {}
+
+int bax() {}
+
+int Bar() {}
+
 int main()
 {
     logging::LoadingBar lexerBar{"Lexing", 0.0f, "Reading main.orb", false};
@@ -17,10 +29,12 @@ int main()
     for (int i = 1; i <= 10; i++)
     {
         totalBar.UpdateBar(static_cast<float>(i * 10), "Man this is a lot of files");
-        for (int j = 1; j <= 20; j++)
+        for (int j = 1; j <= 10; j++)
         {
-            fileBar.UpdatePercent(static_cast<float>(j * 5));
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            fileBar.UpdatePercent(static_cast<float>(j * 10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
+
+        logging::Warn("Finished file");
     }
 }

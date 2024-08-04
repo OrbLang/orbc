@@ -4,12 +4,12 @@
 #include <ostream>
 #include <string_view>
 
+#ifdef LOGGING_LIB
+#include <log/_log.hpp>
+#endif
+
 namespace logging
 {
-inline int m_totalLineCount = 0;
-
-void m_UpdateLineCount(std::string_view string);
-
 /// Send an error message to a stream.
 /// * `msg` - The error message
 /// * `stream` - The `ostream`. Defaults to `std::cerr` (stderr)
@@ -19,4 +19,9 @@ void Error(std::string_view msg, std::ostream& stream = std::cerr);
 /// * `msg` - The warning message
 /// * `stream` - The `ostream`. Defaults to `std::cout` (stdout)
 void Warn(std::string_view msg, std::ostream& stream = std::cout);
+
+/// Send a info message to a stream.
+/// * `msg` - The info message
+/// * `stream` - The `ostream`. Defaults to `std::cout` (stdout)
+void Info(std::string_view msg, std::ostream& stream = std::cout);
 }; // namespace logging
