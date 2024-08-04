@@ -13,6 +13,7 @@ enum class Color
     FgGreen = 32,
     FgYellow = 33,
     FgBlue = 34,
+    FgGray = 90,
     FgDefault = 39,
     BgRed = 41,
     BgGreen = 42,

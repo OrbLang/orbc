@@ -85,6 +85,7 @@ void LoadingBar::Draw()
 
     color::Modifier nameColor{color::Color::FgYellow, color::Effect::Bold};
     color::Modifier barColor{color::Color::FgGreen, color::Effect::Bold};
+    color::Modifier descColor{color::Color::FgGray, color::Effect::None};
     color::Modifier noColor{color::Color::FgDefault, color::Effect::None};
 
     // Erase the line
@@ -92,7 +93,7 @@ void LoadingBar::Draw()
 
     // print the bar
     std::cout << " - " << nameColor << name << " \t" << barColor << barString << '(' << percent
-              << "%)" << noColor << ": " << description << std::endl;
+              << "%)" << descColor << ": " << description << noColor << std::endl;
 
     // Revert the cursor to the last saved position
     std::cout << "\x1b[u";
