@@ -1,3 +1,4 @@
+#define LOGGING_LIB
 #include "log.hpp"
 
 #include "color.hpp"
@@ -9,14 +10,16 @@
 
 using namespace logging::color;
 
-void logging::m_UpdateLineCount(std::string_view string)
+namespace logging
+{
+void UpdateLineCount(std::string_view string)
 {
     int newLines = static_cast<int>(std::ranges::count(string, '\n'));
 
-    m_totalLineCount += 1 + newLines;
+    totalLineCount += 1 + newLines;
 }
 
-void logging::Error(std::string_view msg, std::ostream& stream)
+void Error(std::string_view msg, std::ostream& stream)
 {
     void Error(std::string_view msg, std::ostream& stream = std::cerr);
     color::Modifier red{Color::FgRed, color::Effect::Bold};
@@ -24,15 +27,25 @@ void logging::Error(std::string_view msg, std::ostream& stream)
 
     stream << red << "[ERROR]: " << msg << reset << std::endl;
 
-    m_UpdateLineCount(msg);
+    UpdateLineCount(msg);
 }
 
-void logging::Warn(std::string_view msg, std::ostream& stream)
+void Warn(std::string_view msg, std::ostream& stream)
 {
     color::Modifier red{color::Color::FgYellow, color::Effect::Bold};
     color::Modifier reset{color::Color::FgDefault, color::Effect::None};
 
     stream << red << "[WARNING]: " << msg << reset << std::endl;
 
-    m_UpdateLineCount(msg);
+    UpdateLineCount(msg);
 }
+
+void Info(std::string_view msg, std::ostream& stream)
+{
+    color::Modifier reset{color::Color::FgDefault, color::Effect::None};
+
+    stream << reset << "[INFO]: " << msg << reset << std::endl;
+
+    UpdateLineCount(msg);
+}
+} // namespace logging
