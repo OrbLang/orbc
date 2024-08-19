@@ -3,7 +3,7 @@ project('orb', 'cpp',
   default_options : ['warning_level=3', 'cpp_std=c++23'])
 
 #libraries
-boost_preprocessor_inc = include_directories('lib/include')
+boost_preprocessor_inc = include_directories('lib/boost')
 src_inc = include_directories('src')
 
 # Add all source files
