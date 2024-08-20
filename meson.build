@@ -15,7 +15,6 @@ executable('orb',
            'src/main.cpp',
            sources,
            install : true,
-           dependencies: [icu_unicode],
            include_directories : [boost_preprocessor_inc, src_inc])
 
 # Run tests
