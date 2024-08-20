@@ -16,6 +16,8 @@ add_global_link_arguments('-stdlib=libc++', language: ['cpp'])
 boost_preprocessor_inc = include_directories('deps/boost')
 src_inc = include_directories('src')
 
+# ICU unicode support
+icu_unicode = dependency('icu-uc')
 
 # Add all source files
 sources = files()
