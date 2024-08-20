@@ -8,6 +8,9 @@ builddir/
 debug/
 release/
 
+# Subprojects
+subprojects/
+
 # Prerequisites
 *.d
 
