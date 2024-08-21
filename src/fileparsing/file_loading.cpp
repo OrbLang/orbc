@@ -1,4 +1,8 @@
 // Project Headers
+#include <__expected/unexpected.h>
+#include <algorithm>
+#include <exception>
+#include <fstream>
 #include <orb/fileparsing/file_loading.hpp>
 #include <orb/log/assert.hpp>
 
@@ -36,12 +40,69 @@ void InitUnicodeParsing(const char* rawFile, int32_t len)
     ucnv_setDefaultName(converterName);
 }
 
-template <>
-std::expected<icu::UnicodeString, std::string> LoadFile<const char8_t*>(const char8_t* path);
+[[clang::always_inline]]
+inline std::expected<icu::UnicodeString, std::string> LoadFilePath(std::filesystem::path path)
+{
+    std::ifstream fileStream{path};
+    if (fileStream.fail())
+        return std::unexpected{std::string{"Failed to open file"}};
+
+    int32_t fileSize = static_cast<int32_t>(std::filesystem::file_size(path));
+
+    // Create an iterator over every character of the fileStream
+    // And copy every character into the vector
+    // std::vector is used over std::string because we only care about the raw data,
+    // and to avoid std::string overhead
+    std::istreambuf_iterator<char> fileIter{fileStream}, endOfStream{};
+    std::vector<char> fileBytes(fileSize);
+    std::copy(fileIter, endOfStream, fileBytes.begin());
+
+    // fileSize - 1 because of an extra `\n` character at the end of all files
+    return icu::UnicodeString{fileBytes.data(), fileSize - 1};
+}
 
 template <>
-std::expected<icu::UnicodeString, std::string> LoadFile<const u8string&>(const u8string& path);
+std::expected<icu::UnicodeString, std::string> LoadFile<const char*>(const char* path)
+{
+    try
+    {
+        std::filesystem::path filePath{path};
+        return LoadFilePath(filePath);
+    }
+    catch (std::exception& e)
+    {
+        return std::unexpected(e.what());
+    }
+}
+
 template <>
-std::expected<icu::UnicodeString, std::string> LoadFile<u8string_view>(u8string_view path);
+std::expected<icu::UnicodeString, std::string> LoadFile<const std::string&>(const std::string& path)
+{
+    try
+    {
+        std::filesystem::path filePath{path};
+        return LoadFilePath(filePath);
+    }
+    catch (std::exception& e)
+    {
+        return std::unexpected(e.what());
+    }
+}
+
+template <>
+std::expected<icu::UnicodeString, std::string> LoadFile<std::string_view>(std::string_view path)
+{
+    try
+    {
+        std::filesystem::path filePath{path};
+        return LoadFilePath(filePath);
+    }
+    catch (std::exception& e)
+    {
+        return std::unexpected(e.what());
+    }
+}
+
+
 
 } // namespace orb::fileparsing

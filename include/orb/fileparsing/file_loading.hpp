@@ -13,9 +13,6 @@
 namespace orb
 {
 
-using u8string = std::basic_string<char8_t>;
-using u8string_view = std::basic_string_view<char8_t>;
-
 namespace fileparsing
 {
 /**
@@ -38,7 +35,7 @@ void InitUnicodeParsing(const char* rawFile, int32_t len = -1);
  * @param path The path to file to be loaded
  * @return Returns a UnicodeString or an error message if something goes wrong
  */
-template <IsOneOf<const char8_t*, const u8string&, u8string_view> T>
+template <IsOneOf<const char*, const std::string&, std::string_view> T>
 std::expected<icu::UnicodeString, std::string> LoadFile(T path);
 
 } // namespace fileparsing
