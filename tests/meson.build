@@ -3,4 +3,4 @@ add_test_setup('Basic',
                 is_default: true)
 
 
-subdir('lexer')
+subdir('loading_files')
