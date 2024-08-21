@@ -1,8 +1,10 @@
+// Project Headers
 #define LOGGING_LIB
-#include "log.hpp"
+#include <orb/log/color.hpp>
+#include <orb/log/log.hpp>
 
-#include "color.hpp"
 
+// STDLIB
 #include <algorithm>
 #include <iostream>
 #include <ostream>

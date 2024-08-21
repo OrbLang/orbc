@@ -1,1 +1,1 @@
-sources += files('cli.cpp', 'cli.hpp')
+sources += files('cli.cpp')

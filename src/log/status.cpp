@@ -1,9 +1,10 @@
-#include "status.hpp"
-
-#include "color.hpp"
+// Project Headers
+#include <orb/log/color.hpp>
+#include <orb/log/status.hpp>
 #define LOGGING_LIB
-#include "log.hpp"
+#include <orb/log/log.hpp>
 
+// STDLIB
 #include <algorithm>
 #include <cmath>
 #include <cstdint>

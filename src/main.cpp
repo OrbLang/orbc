@@ -1,16 +1,20 @@
-#include "cli/cli.hpp"
-#include "ctx/ctx.hpp"
-#include "log/log.hpp"
+// Project Headers
+#include <orb/cli/cli.hpp>
+#include <orb/ctx.hpp>
+#include <orb/log/log.hpp>
+#include <orb/log/status.hpp>
 
-#include <__expected/expected.h>
+// STDLIB
 #include <cstdio>
+#include <expected>
 #include <iostream>
+
 
 int main(int argc, char** argv)
 {
-    ctx::GlobalCtx ctx = ctx::DefaultCtx();
+    orb::GlobalCtx ctx = orb::GlobalCtx::Default();
 
-    std::expected<int, std::string> parseResult = cli::ParseArgs(&ctx, argc, argv);
+    std::expected<int, std::string> parseResult = orb::cli::ParseArgs(&ctx, argc, argv);
 
     if (!parseResult)
     {

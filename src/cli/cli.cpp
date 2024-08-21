@@ -1,19 +1,19 @@
-#include "cli.hpp"
+// Project Headers
+#include <orb/cli/cli.hpp>
+#include <orb/ctx.hpp>
 
-#include "ctx/ctx.hpp"
-
-#include <__expected/unexpect.h>
-#include <__expected/unexpected.h>
+// STDLIB
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <expected>
 #include <ostream>
 #include <print>
 #include <sstream>
 
-void cli::PrintVersion() { printf("orbc: v%s\n", VERSION); }
+void orb::cli::PrintVersion() { puts("orbc: v" VERSION "\n"); }
 
-void cli::PrintHelpPage(char* path)
+void orb::cli::PrintHelpPage(char* path)
 {
     std::print("ORB COMPILER (ORBC) v{}\n", VERSION);
     std::print("Path: {}\n", path);
@@ -38,7 +38,7 @@ void cli::PrintHelpPage(char* path)
 }
 
 
-std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv)
+std::expected<int, std::string> orb::cli::ParseArgs(orb::GlobalCtx* ctx, int argc, char** argv)
 {
     int argsSupplied = 0;
 

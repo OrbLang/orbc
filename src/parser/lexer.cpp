@@ -1,13 +1,11 @@
-#include "lexer.hpp"
+// Project Headers
+#include <orb/parser/ast.hpp>
+#include <orb/parser/lexer.hpp>
+#include <orb/parser/tokens.hpp>
 
-#include "ast.hpp"
-#include "tokens.hpp"
-
+// STDLIB
 #include <cctype>
-#include <concepts>
-#include <cstdio>
 #include <fstream>
-#include <iostream>
 #include <string>
 
 using namespace parser;

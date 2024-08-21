@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ast.hpp"
+// Project Headers
+#include <orb/parser/ast.hpp>
 
 namespace parser
 {

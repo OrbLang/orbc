@@ -1,8 +1,10 @@
 #pragma once
 
-#include "ast.hpp"
-#include "types.hpp"
+// Project headers
+#include <orb/parser/ast.hpp>
+#include <orb/parser/types.hpp>
 
+// STDLIB
 #include <fstream>
 #include <variant>
 

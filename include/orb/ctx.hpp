@@ -1,10 +1,9 @@
 #pragma once
-
+// STDLIB
 #include <vector>
 
-namespace ctx
+namespace orb
 {
-
 struct GlobalCtx
 {
     /// The path to the resulting executable.
@@ -21,18 +20,17 @@ struct GlobalCtx
     std::string targetPlatform;
     /// If the executable is for release (`true`) or debug (`false`).
     bool inReleaseMode;
+
+    /// Default initializer for `GlobalCtx`
+    static inline GlobalCtx Default()
+    {
+        return GlobalCtx{.outPath = "",
+                         .fileInclude = {},
+                         .libInclude = {},
+                         .stdlib = "",
+                         .optLevel = 1,
+                         .targetPlatform = "",
+                         .inReleaseMode = false};
+    }
 };
-
-/// Get the default values for the `GlobalCtx`
-inline GlobalCtx DefaultCtx()
-{
-    return GlobalCtx{.outPath = "",
-                     .fileInclude = {},
-                     .libInclude = {},
-                     .stdlib = "",
-                     .optLevel = 1,
-                     .targetPlatform = "",
-                     .inReleaseMode = false};
-}
-
-} // namespace ctx
+} // namespace orb
