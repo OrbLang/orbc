@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <exception>
 #include <fstream>
+#include <memory>
 #include <orb/fileparsing/file_loading.hpp>
 #include <orb/log/assert.hpp>
 
 
 // Libraries
 // ICU
+#include <system_error>
 #include <unicode/errorcode.h>
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_err.h>
@@ -43,22 +45,20 @@ void InitUnicodeParsing(const char* rawFile, int32_t len)
 [[clang::always_inline]]
 inline std::expected<icu::UnicodeString, std::string> LoadFilePath(std::filesystem::path path)
 {
+    std::error_code err;
+    int32_t fileSize = static_cast<int32_t>(std::filesystem::file_size(path, err));
+    if (err.value())
+        return std::unexpected{err.message()};
+
     std::ifstream fileStream{path};
     if (fileStream.fail())
-        return std::unexpected{std::string{"Failed to open file"}};
+        return std::unexpected{"Failed to open file"};
 
-    int32_t fileSize = static_cast<int32_t>(std::filesystem::file_size(path));
-
-    // Create an iterator over every character of the fileStream
-    // And copy every character into the vector
-    // std::vector is used over std::string because we only care about the raw data,
-    // and to avoid std::string overhead
-    std::istreambuf_iterator<char> fileIter{fileStream}, endOfStream{};
-    std::vector<char> fileBytes(fileSize);
-    std::copy(fileIter, endOfStream, fileBytes.begin());
+    std::unique_ptr<char[]> fileBytes{new char[fileSize]};
+    fileStream.read(fileBytes.get(), fileSize);
 
     // fileSize - 1 because of an extra `\n` character at the end of all files
-    return icu::UnicodeString{fileBytes.data(), fileSize - 1};
+    return icu::UnicodeString{fileBytes.get(), fileSize - 1};
 }
 
 template <>
