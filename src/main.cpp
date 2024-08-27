@@ -2,17 +2,6 @@
 #include "log/status.hpp"
 
 #include <thread>
-
-int bru() {}
-
-int foo() {}
-
-int bar() {}
-
-int bax() {}
-
-int Bar() {}
-
 int main()
 {
     logging::LoadingBar lexerBar{"Lexing", 0.0f, "Reading main.orb", false};
