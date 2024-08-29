@@ -13,10 +13,10 @@ add_global_link_arguments('-stdlib=libc++', language: ['cpp'])
 include = include_directories('include')
 
 # ICU unicode support
+add_global_arguments('-DUNISTR_FROM_STRING_EXPLICIT=explicit', language: ['cpp'])
 icu_uc = dependency('icu-uc')
 icu_io = dependency('icu-io')
 icu_i18n = dependency('icu-i18n')
-add_global_arguments('-DUNISTR_FROM_STRING_EXPLICIT=explicit', language: ['cpp'])
 
 # Add all source files
 sources = files()
