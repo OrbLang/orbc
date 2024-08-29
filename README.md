@@ -1,1 +1,1 @@
-# lighter - A language written in C++
+# Orb - A language for wizards written in C++
