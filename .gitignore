@@ -4,7 +4,12 @@
 compile_commands.json
 
 # Build Directory
-# builddir/
+builddir/
+debug/
+release/
+
+# Subprojects
+subprojects/
 
 # Prerequisites
 *.d
@@ -58,3 +63,4 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
