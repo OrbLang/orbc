@@ -1,29 +1,32 @@
-#include "log/log.hpp"
-#include "log/status.hpp"
+#include "cli/cli.hpp"
+#include "ctx/ctx.hpp"
 
-#include <thread>
-int main()
+#include <cstdio>
+#include <iostream>
+
+int main(int argc, char** argv)
 {
-    logging::LoadingBar lexerBar{"Lexing", 0.0f, "Reading main.orb", false};
-    logging::LoadingBar parseBar{"Parsing", 0.0f, "Parsing to AST", false};
+    ctx::GlobalCtx ctx = ctx::DefaultCtx();
 
-    logging::Error("I will now change \"Test\" to 40%");
+    cli::ParseArgs(&ctx, argc, argv);
 
+    std::cout << "Entrypath:\t" << ctx.entryPath << std::endl;
+    std::cout << "OutPath:\t" << ctx.outPath << std::endl;
 
-    lexerBar.UpdateBar(40.0f, "eyo");
-
-    logging::LoadingBar fileBar{"Curr File", 0.0, "Compiling", false};
-    logging::LoadingBar totalBar{"Total", 0.0, "Man this is a lot of files", false};
-
-    for (int i = 1; i <= 10; i++)
+    printf("File includes %zu\n", ctx.fileInclude.size());
+    for (size_t i = 0; i < ctx.fileInclude.size(); i++)
     {
-        totalBar.UpdateBar(static_cast<float>(i * 10), "Man this is a lot of files");
-        for (int j = 1; j <= 10; j++)
-        {
-            fileBar.UpdatePercent(static_cast<float>(j * 10));
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        }
-
-        logging::Warn("Finished file");
+        std::cout << "\t" << ctx.fileInclude[i] << std::endl;
     }
+
+    printf("Lib includes %zu\n", ctx.libInclude.size());
+    for (size_t i = 0; i < ctx.libInclude.size(); i++)
+    {
+        std::cout << "\t" << ctx.libInclude[i] << std::endl;
+    }
+
+    std::cout << "Stdlib:\t\t" << ctx.stdlib << std::endl;
+    std::cout << "Optlevel:\t" << ctx.optLevel << std::endl;
+    std::cout << "Target:\t\t" << ctx.targetPlatform << std::endl;
+    std::cout << "Release mode:\t" << (ctx.inReleaseMode ? "true" : "false") << std::endl;
 }
