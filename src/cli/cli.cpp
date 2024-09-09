@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <optional>
+#include <expected>
 #include <string_view>
 
 
@@ -13,7 +13,7 @@ void cli::PrintVersion() { printf("orbc: v%s\n", VERSION); }
 
 void cli::PrintHelpPage() { printf("ORB COMPILER (ORBC) v%s\n", VERSION); }
 
-void cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv)
+std::ecpected<void, std::string_view> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv)
 {
     // If there are isn't any given arguments.
     // Argv is 1 long by default, since argv[0] holds the path to

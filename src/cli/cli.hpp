@@ -2,6 +2,7 @@
 
 #include "ctx/ctx.hpp"
 
+#include <expected>
 #include <optional>
 #include <string_view>
 
@@ -14,7 +15,7 @@ namespace cli
 /// them into the given `GlobalCtx`.
 /// Returns a string with an error message, if a parse error happened.
 /// This should be handled.
-void ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv);
+std::expected<void, std::string_view> ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv);
 
 void PrintHelpPage();
 
