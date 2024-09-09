@@ -2,10 +2,14 @@
 
 #include "ctx/ctx.hpp"
 
+#include <__expected/unexpect.h>
+#include <__expected/unexpected.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <expected>
+// #include <expected>
+#include <iostream>
+#include <sstream>
 #include <string_view>
 
 
@@ -13,28 +17,32 @@ void cli::PrintVersion() { printf("orbc: v%s\n", VERSION); }
 
 void cli::PrintHelpPage() { printf("ORB COMPILER (ORBC) v%s\n", VERSION); }
 
-std::ecpected<void, std::string_view> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv)
+std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv)
 {
+    int argsSupplied = 0;
+
+    std::stringstream errorStream{""};
+
     // If there are isn't any given arguments.
     // Argv is 1 long by default, since argv[0] holds the path to
     // the executable
     if (argc <= 1)
     {
-        return;
+        return 0;
     }
 
     // Print help page
     if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
     {
         PrintHelpPage();
-        return;
+        return argsSupplied + 1;
     }
 
     // Print version
     if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)
     {
         PrintVersion();
-        return;
+        return argsSupplied + 1;
     }
 
     bool hasEntrypath = false;
@@ -48,22 +56,29 @@ std::ecpected<void, std::string_view> cli::ParseArgs(ctx::GlobalCtx* ctx, int ar
             // Entrypath is the only positional argument so far.
             if (hasEntrypath)
             {
-                printf("Already have entry path\n");
-                return; // TODO: return error
+                errorStream << "Entry path already set to \"" << ctx->entryPath
+                            << "\", but got another positional argument \"" << argv[i] << "\"";
+
+                return std::unexpected(errorStream.str());
             }
 
             ctx->entryPath = argv[i];
             hasEntrypath = true;
+            argsSupplied += 1;
         }
 
         // Output path
         else if (strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0)
         {
             if (argc <= i + 1)
-                return; // TODO: Return error
+            {
+                errorStream << "Expected a value to the --output argument";
+                return std::unexpected(errorStream.str());
+            }
 
             i += 1;
             ctx->outPath = argv[i];
+            argsSupplied += 1;
         }
 
         // File includes
@@ -74,6 +89,12 @@ std::ecpected<void, std::string_view> cli::ParseArgs(ctx::GlobalCtx* ctx, int ar
                 i += 1;
                 ctx->fileInclude.push_back(argv[i]);
             }
+            if (ctx->fileInclude.size() == 0)
+            {
+                errorStream << "Expected atleast one string value for the --file-include argument";
+                return std::unexpected(errorStream.str());
+            }
+            argsSupplied += 1;
         }
 
         // Lib includes
@@ -84,42 +105,78 @@ std::ecpected<void, std::string_view> cli::ParseArgs(ctx::GlobalCtx* ctx, int ar
                 i += 1;
                 ctx->libInclude.push_back(argv[i]);
             }
+            if (ctx->libInclude.size() == 0)
+            {
+                errorStream << "Expected atleast one string value for the --lib-include argument";
+                return std::unexpected(errorStream.str());
+            }
+            argsSupplied += 1;
         }
 
         // Stdlib path
         else if (strcmp(argv[i], "--stdlib") == 0)
         {
             if (argc <= i + 1)
-                return; // TODO: Return error
+            {
+                errorStream << "Expected a string value for the --stdlib argument";
+                return std::unexpected(errorStream.str());
+            }
 
             i += 1;
             ctx->stdlib = argv[i];
+            argsSupplied += 1;
         }
 
         // Optimization level
         else if (strcmp(argv[i], "--opt") == 0)
         {
             if (argc <= i + 1)
-                return; // TODO: Return error
+            {
+                errorStream << "Expected an integer value for the --opt argument";
+                return std::unexpected(errorStream.str());
+            }
 
             i += 1;
-            ctx->optLevel = atoi(argv[i]);
+            try
+            {
+                ctx->optLevel = std::stoi(argv[i]);
+            }
+            catch (std::exception const& e)
+            {
+                errorStream << "Expected integer argument for --opt, got \"" << argv[i] << "\"";
+                return std::unexpected(errorStream.str());
+            }
+            argsSupplied += 1;
         }
 
         // Target platform
         else if (strcmp(argv[i], "--target") == 0)
         {
             if (argc <= i + 1)
-                return; // TODO: Return error
+            {
+                errorStream << "Expected a string value for the --target argument";
+                return std::unexpected(errorStream.str());
+            }
 
             i += 1;
             ctx->targetPlatform = argv[i];
+            argsSupplied += 1;
         }
 
         // Release mode
         else if (strcmp(argv[i], "--release") == 0)
         {
             ctx->inReleaseMode = true;
+            argsSupplied += 1;
+        }
+
+        // Unknown command / argument
+        else
+        {
+            errorStream << "Got unknown argument: \"" << argv[i] << "\"";
+            return std::unexpected(errorStream.str());
         }
     }
+
+    return argsSupplied;
 }

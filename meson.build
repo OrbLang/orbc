@@ -2,6 +2,9 @@ project('orb', 'cpp',
   version : '0.1',
   default_options : ['warning_level=3', 'cpp_std=c++23'])
 
+add_global_arguments('-stdlib=libc++', language: ['cpp'])
+add_global_link_arguments('-stdlib=libc++', language: ['cpp'])
+
 ## Libraries
 boost_preprocessor_inc = include_directories('deps/boost')
 src_inc = include_directories('src')

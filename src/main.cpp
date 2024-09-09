@@ -1,14 +1,23 @@
 #include "cli/cli.hpp"
 #include "ctx/ctx.hpp"
+#include "log/log.hpp"
 
+#include <__expected/expected.h>
 #include <cstdio>
 #include <iostream>
+#include <string_view>
 
 int main(int argc, char** argv)
 {
     ctx::GlobalCtx ctx = ctx::DefaultCtx();
 
-    cli::ParseArgs(&ctx, argc, argv);
+    std::expected<int, std::string> parseResult = cli::ParseArgs(&ctx, argc, argv);
+
+    if (!parseResult)
+    {
+        logging::Error(parseResult.error());
+        exit(1);
+    }
 
     std::cout << "Entrypath:\t" << ctx.entryPath << std::endl;
     std::cout << "OutPath:\t" << ctx.outPath << std::endl;
