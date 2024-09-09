@@ -16,7 +16,7 @@ namespace cli
 /// Otherwise it returns the number of arguments supplied by the user.
 std::expected<int, std::string> ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv);
 
-void PrintHelpPage();
+void PrintHelpPage(char* path);
 
 void PrintVersion();
 

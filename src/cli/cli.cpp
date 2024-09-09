@@ -7,15 +7,38 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-// #include <expected>
-#include <iostream>
 #include <sstream>
 #include <string_view>
 
 
 void cli::PrintVersion() { printf("orbc: v%s\n", VERSION); }
 
-void cli::PrintHelpPage() { printf("ORB COMPILER (ORBC) v%s\n", VERSION); }
+void cli::PrintHelpPage(char* path)
+{
+    printf("ORB COMPILER (ORBC) v%s\n", VERSION);
+    printf("Path: %s\n", path);
+
+    printf("OPTIONS:\n");
+    printf("\t--help, -h                    Prints the help page\n");
+    printf("\t--version, -v                 Prints the version\n");
+    printf("\t<entry>                       A positional argument. The path to the file which the "
+           "program starts from\n");
+    printf("\t[--out, -o] <path>            The path to where the resulting executable should be "
+           "stored\n");
+    printf("\t[--file-include] <paths>...   A list of space seperated paths to files that should "
+           "be included in the compilation\n");
+    printf(
+        "\t[--lib-include] <paths>...    A list of space seperated paths to libraries that should "
+        "be included in the compilation\n");
+    printf("\t[--stdlib] <path>             The path to the standard library to use. Is "
+           "$HOME/.orb/stdlib by default\n");
+    printf("\t[--opt] <level>               The optimization level of the program. Is an integer "
+           "between 1 and 3\n");
+    printf("\t[--target] <platform>         Specifies the target platform of the program\n");
+    printf("\t[--release]                   Use this to compile in release mode, otherwise it will "
+           "compile in debug mode\n");
+}
+
 
 std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, char** argv)
 {
@@ -34,15 +57,15 @@ std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, ch
     // Print help page
     if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
     {
-        PrintHelpPage();
-        return argsSupplied + 1;
+        PrintHelpPage(argv[0]);
+        exit(0); // Exit the program on `--help`
     }
 
     // Print version
     if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0)
     {
         PrintVersion();
-        return argsSupplied + 1;
+        exit(0); // Exit the program on `--version`
     }
 
     bool hasEntrypath = false;
