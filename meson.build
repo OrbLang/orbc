@@ -1,6 +1,13 @@
-project('orb', 'cpp',
-  version : '0.1',
+project('orbc', 'cpp',
+  version : '0.0.1',
   default_options : ['warning_level=3', 'cpp_std=c++23'])
+
+
+no_color = get_option('no-color')
+if no_color
+  add_global_arguments('-DORBF_NO_COLOR', language: ['cpp'])
+endif
+
 
 add_global_arguments('-stdlib=libc++', language: ['cpp'])
 add_global_link_arguments('-stdlib=libc++', language: ['cpp'])
@@ -14,7 +21,7 @@ src_inc = include_directories('src')
 sources = files()
 subdir('src')
 
-executable('orb',
+executable('orbc',
            'src/main.cpp',
            sources,
            install : true,
