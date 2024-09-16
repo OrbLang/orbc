@@ -7,36 +7,34 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ostream>
+#include <print>
 #include <sstream>
-#include <string_view>
-
 
 void cli::PrintVersion() { printf("orbc: v%s\n", VERSION); }
 
 void cli::PrintHelpPage(char* path)
 {
-    printf("ORB COMPILER (ORBC) v%s\n", VERSION);
-    printf("Path: %s\n", path);
+    std::print("ORB COMPILER (ORBC) v{}\n", VERSION);
+    std::print("Path: {}\n", path);
 
-    printf("OPTIONS:\n");
-    printf("\t--help, -h                    Prints the help page\n");
-    printf("\t--version, -v                 Prints the version\n");
-    printf("\t<entry>                       A positional argument. The path to the file which the "
-           "program starts from\n");
-    printf("\t[--out, -o] <path>            The path to where the resulting executable should be "
-           "stored\n");
-    printf("\t[--file-include] <paths>...   A list of space seperated paths to files that should "
-           "be included in the compilation\n");
-    printf(
-        "\t[--lib-include] <paths>...    A list of space seperated paths to libraries that should "
-        "be included in the compilation\n");
-    printf("\t[--stdlib] <path>             The path to the standard library to use. Is "
-           "$HOME/.orb/stdlib by default\n");
-    printf("\t[--opt] <level>               The optimization level of the program. Is an integer "
-           "between 1 and 3\n");
-    printf("\t[--target] <platform>         Specifies the target platform of the program\n");
-    printf("\t[--release]                   Use this to compile in release mode, otherwise it will "
-           "compile in debug mode\n");
+    puts("OPTIONS:\n"
+         "\t--help, -h                      Prints the help page\n"
+         "\t--version, -v                   Prints the version\n"
+         "\t<files>...                      The paths to the files that will be included in the "
+         "compilation\n"
+         "\t[--out, -o] <path>              The path to where the resulting executable should be "
+         "stored\n"
+         "\t[--lib-include, -l] <paths>...  A list of space seperated paths to libraries that "
+         "should "
+         "be included in the compilation\n"
+         "\t[--stdlib] <path>               The path to the standard library to use. Is "
+         "$HOME/.orb/stdlib by default\n"
+         "\t[--opt] <level>                 The optimization level of the program. Is an integer "
+         "between 1 and 3\n"
+         "\t[--target] <platform>           Specifies the target platform of the program\n"
+         "\t[--release]                     Use this to compile in release mode, otherwise it will "
+         "compile in debug mode\n");
 }
 
 
@@ -51,7 +49,8 @@ std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, ch
     // the executable
     if (argc <= 1)
     {
-        return 0;
+        errorStream << "No file supplied";
+        return std::unexpected(errorStream.str());
     }
 
     // Print help page
@@ -68,25 +67,17 @@ std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, ch
         exit(0); // Exit the program on `--version`
     }
 
-    bool hasEntrypath = false;
-
     // Parse args
     for (int i = 1; i < argc; i++)
     {
-        // If argument is not a flag, or a named argument
         if (argv[i][0] != '-')
         {
-            // Entrypath is the only positional argument so far.
-            if (hasEntrypath)
+            while (i < argc && argv[i][0] != '-')
             {
-                errorStream << "Entry path already set to \"" << ctx->entryPath
-                            << "\", but got another positional argument \"" << argv[i] << "\"";
-
-                return std::unexpected(errorStream.str());
+                ctx->fileInclude.push_back(argv[i]);
+                i += 1;
             }
-
-            ctx->entryPath = argv[i];
-            hasEntrypath = true;
+            i -= 1;
             argsSupplied += 1;
         }
 
@@ -104,24 +95,8 @@ std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, ch
             argsSupplied += 1;
         }
 
-        // File includes
-        else if (strcmp(argv[i], "--file-include") == 0)
-        {
-            while (i + 1 < argc && argv[i + 1][0] != '-')
-            {
-                i += 1;
-                ctx->fileInclude.push_back(argv[i]);
-            }
-            if (ctx->fileInclude.size() == 0)
-            {
-                errorStream << "Expected atleast one string value for the --file-include argument";
-                return std::unexpected(errorStream.str());
-            }
-            argsSupplied += 1;
-        }
-
         // Lib includes
-        else if (strcmp(argv[i], "--lib-include") == 0)
+        else if (strcmp(argv[i], "--lib-include") == 0 || strcmp(argv[i], "-l") == 0)
         {
             while (i + 1 < argc && argv[i + 1][0] != '-')
             {
@@ -169,6 +144,14 @@ std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, ch
                 errorStream << "Expected integer argument for --opt, got \"" << argv[i] << "\"";
                 return std::unexpected(errorStream.str());
             }
+
+            // TODO: Figure out the correct max opt level
+            constexpr int maxOptLevel = 3;
+            if (ctx->optLevel > maxOptLevel)
+            {
+                errorStream << "Expected optimization value to be between 0 and 3, got " << argv[i];
+                return std::unexpected(errorStream.str());
+            }
             argsSupplied += 1;
         }
 
@@ -199,6 +182,34 @@ std::expected<int, std::string> cli::ParseArgs(ctx::GlobalCtx* ctx, int argc, ch
             errorStream << "Got unknown argument: \"" << argv[i] << "\"";
             return std::unexpected(errorStream.str());
         }
+    }
+
+    // TODO: Check for required args
+
+    if (ctx->fileInclude.size() == 0)
+    {
+        errorStream << "No file supplied";
+        return std::unexpected(errorStream.str());
+    }
+
+    // Implicit values if not given an explicit value
+    if (ctx->outPath == "")
+    {
+        std::stringstream result{""};
+
+        for (char c : ctx->fileInclude[0])
+        {
+            if (c == '.')
+                break;
+
+            result << c;
+        }
+
+        // Check if the outpath and the entrypath are the same
+        if (result.str().length() == ctx->fileInclude[0].length())
+            result << ".out";
+
+        ctx->outPath = result.str();
     }
 
     return argsSupplied;
