@@ -49,6 +49,7 @@ struct Modifier
     Color color;
     Effect effect;
 
+#ifndef ORBF_NO_COLOR
     friend std::ostream& operator<<(std::ostream& os, const Modifier& mod)
     {
         int colorCode = static_cast<int>(mod.color);
@@ -59,6 +60,15 @@ struct Modifier
 
         return os << "\x1b[" << effectCode << ";" << colorCode << "m";
     }
+#else
+    friend std::ostream& operator<<(std::ostream& os, const Modifier& mod)
+    {
+        // Ignore the parameter not being used
+        (void)mod;
+
+        return os;
+    }
+#endif
 };
 }; // namespace color
 } // namespace logging

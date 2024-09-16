@@ -21,7 +21,6 @@ void UpdateLineCount(std::string_view string)
 
 void Error(std::string_view msg, std::ostream& stream)
 {
-    void Error(std::string_view msg, std::ostream& stream = std::cerr);
     color::Modifier red{Color::FgRed, color::Effect::Bold};
     color::Modifier reset{color::Color::FgDefault, color::Effect::None};
 
