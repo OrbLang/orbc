@@ -42,7 +42,7 @@ jobs:
         meson setup ${{ matrix.builddir }} --buildtype matrix.build_type
 
     - name: Build
-      run: meson compile -C ${{ smatrix.builddir }}
+      run: meson compile -C ${{ matrix.builddir }}
 
     - name: Test
-      run: meson compile -C ${{ matrix.builddir }}
+      run: meson test -C ${{ matrix.builddir }}
