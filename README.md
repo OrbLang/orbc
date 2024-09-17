@@ -24,33 +24,35 @@ Here the outputted executable will be called `baz`
 To install, you will need to clone the repository and compile it yourself.
 To compile orbc, we use `meson`, which you will need to have installed on your system.
 
-#### 1. Clone the repo
+#### 1. Clone the repo:
 ```bash
 $ git clone https://github.com/OrbLang/orbc
 $ cd orbc
 ```
 
-#### 2. Then set your c++ compiler of choice, like `clang++`:
+#### 2. Specify what  c++ compiler and linker to use:
+Here llvm's clang and lld are used
 ```bash
-$ export CXX=clang++; export CC=clang
+$  export CC=clang; export CXX=clang++; export CC_LD=ld.lld; export CXX_LD=ld.lld
 ```
+_this can also be done, without exporting, in the next step: `CC=clang CXX=clang++ meson setup ...`_
 
-#### 3. After that, use `meson` to setup a build directory, by running the following command:
+#### 3. Setup a build directory:
 You can change the prefix to where you want orbc to be installed.
-If left blank it will default to `/usr/local` and `C:\` on Windows.
+If left out it will default to `/usr/local` and `C:\` on Windows.
 You can also change the buildtype if desired, for example to `debug` or `debugoptimized`
 ```bash
 $ meson setup builddir --prefix=$PWD/install --buildtype release
 ```
 _(If you wish for `orbc` to not output any color, the flag `-Dno-color=true` can be used)_
 
-#### 4. After that, you only need to compile the project.
+#### 4. Compile orbc:
 ```bash
 $ meson compile -C builddir
 ```
 Now the `orbc` executable should be in `./builddir/orbc` 
-#### 5. And if you wish, you can install orbc and dependencies with the install command
+#### 5. Optionally install orbc and dependencies on your system:
 ```bash
-$ meson install -C builddir
+$ sudo meson install -C builddir
 ```
-And orbc will end up in a `bin` folder at the prefix specified in step 3. _(If no prefix orbc will be at `/usr/local/bin`)_
+Now orbc will end up in a `bin` folder at the prefix specified in step 3. _(If no prefix orbc will be at `/usr/local/bin`)_
