@@ -1,6 +1,6 @@
 # Orbc - A compiler for Orb
 
-## !! WARNING !!
+## ⚠️ !! WARNING !! ⚠️
 This project isn't done yet, and is currently in a non-functioning state.
 We are actively working on it though.
 
