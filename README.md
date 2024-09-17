@@ -5,24 +5,21 @@ This project isn't done yet, and is currently in a non-functioning state.
 We are actively working on it though.
 
 ## Usage
-
-To compile a simple project, supply the `orbc` compiler with all the files that will be used by compilation,
-where the entry file is the first one.
-
+To compile a simple project, supply the `orbc` compiler with all your files containing orb source code.
 ```bash
 $ orbc ponder.orb foo.orb bar.orb
 ```
-This will output an executable called `ponder` into your current working directory.
-You can also specify the name with the `-o` flag.
+This will output an executable called `ponder`, copying the first source file filename.
+To specify the name of the output, supply the `-o` flag, followed by the name of the output.
 
 ```bash
 $ orbc ponder.orb foo.orb bar.orb -o baz
 ```
-Here the outputted executable will be called `baz`
+Here the output will be named `baz`
 
 ## Installation
-To install, you will need to clone the repository and compile it yourself.
-To compile orbc, we use `meson`, which you will need to have installed on your system.
+To install orbc, you will need to clone the repository and compile it yourself.
+We use the `meson` buildsystem, which you will need to have installed on your system.
 
 #### 1. Clone the repo:
 ```bash
