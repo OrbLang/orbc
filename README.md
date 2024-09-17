@@ -10,42 +10,47 @@ To compile a simple project, supply the `orbc` compiler with all the files that 
 where the entry file is the first one.
 
 ```bash
-$ orbc main.orb foo.orb bar.orb
+$ orbc ponder.orb foo.orb bar.orb
 ```
-This will output an executable called `main` into your current working directory.
-You can also specify a specific output path with the `-o` flag.
+This will output an executable called `ponder` into your current working directory.
+You can also specify the name with the `-o` flag.
 
 ```bash
-$ orbc main.orb foo.orb bar.orb -o baz
+$ orbc ponder.orb foo.orb bar.orb -o baz
 ```
 Here the outputted executable will be called `baz`
 
 ## Installation
-To install, either download the binaries of the latest release, or you can manually install it.
+To install, you will need to clone the repository and compile it yourself.
+To compile orbc, we use `meson`, which you will need to have installed on your system.
 
-### Manual installation
-
-To manually compile the compiler, you need to make sure you have `meson` installed.
-
-Clone the repo
+#### 1. Clone the repo
 ```bash
 $ git clone https://github.com/OrbLang/orbc
 $ cd orbc
 ```
 
-Then set your c++ compiler of choice, like `clang++`:
+#### 2. Then set your c++ compiler of choice, like `clang++`:
 ```bash
-$ CXX='clang++'
+$ export CXX=clang++; export CC=clang
 ```
 
-After that, use `meson` to setup a builddir, by running:
+#### 3. After that, use `meson` to setup a build directory, by running the following command:
+You can change the prefix to where you want orbc to be installed.
+If left blank it will default to `/usr/local` and `C:\` on Windows.
+You can also change the buildtype if desired, for example to `debug` or `debugoptimized`
 ```bash
-$ meson setup builddir
+$ meson setup builddir --prefix=$PWD/install --buildtype release
 ```
-(If you wish for `orbc` to not output any color, use the `-Dno-color=true` flag here)
+_(If you wish for `orbc` to not output any color, the flag `-Dno-color=true` can be used)_
 
-After that, you only need to compile the project.
+#### 4. After that, you only need to compile the project.
 ```bash
 $ meson compile -C builddir
 ```
 Now the `orbc` executable should be in `./builddir/orbc` 
+#### 5. And if you wish, you can install orbc and dependencies with the install command
+```bash
+$ meson install -C builddir
+```
+And orbc will end up in a `bin` folder at the prefix specified in step 3. _(If no prefix orbc will be at `/usr/local/bin`)_
