@@ -1,0 +1,48 @@
+# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
+name: Meson build and test on Ubuntu
+
+on:
+  push:
+    branches:
+      - $default-branch
+  pull_request:
+    branches:
+      - $default-branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      matrix:
+        builddir: 
+          - "${{ github.workspace }}/build"
+        build_type:
+          - release
+          - debug
+        include:
+          - c_compiler: gcc
+            cpp_compiler: g++
+            linker: ld
+          - c_compiler: clang
+            cpp_compiler: clang++
+            linker: ld.lld
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get dependencies
+      run: sudo apt-get install libicu-dev
+
+    - name: Configure Meson
+      run: >
+        CC=${{ matrix.c_compiler }} CXX=${{ matrix.cpp_compiler }}
+        CC_LD=${{ matrix.linker }} CXX_LD=${{ matrix.linker }}
+        meson setup ${{ matrix.builddir }} --buildtype matrix.build_type
+
+    - name: Build
+      run: meson compile -C ${{ smatrix.builddir }}
+
+    - name: Test
+      run: meson compile -C ${{ matrix.builddir }}
