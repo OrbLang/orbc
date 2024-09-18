@@ -4,4 +4,4 @@
 
 
 template <typename T, typename... Ts>
-concept IsOneOf = (std::same_as<T, Ts> || ...);
+concept IsAnyOf = (std::same_as<T, Ts> || ...);

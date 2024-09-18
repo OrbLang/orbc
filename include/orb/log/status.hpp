@@ -29,8 +29,4 @@ private:
     void Draw();
 };
 
-
-
-
-
 } // namespace logging

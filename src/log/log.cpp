@@ -10,8 +10,6 @@
 #include <ostream>
 #include <string_view>
 
-using namespace logging::color;
-
 namespace logging
 {
 void UpdateLineCount(std::string_view string)
@@ -23,8 +21,8 @@ void UpdateLineCount(std::string_view string)
 
 void Error(std::string_view msg, std::ostream& stream)
 {
-    color::Modifier red{Color::FgRed, color::Effect::Bold};
-    color::Modifier reset{color::Color::FgDefault, color::Effect::None};
+    Modifier red{Color::FgRed, Effect::Bold};
+    Modifier reset{Color::FgDefault, Effect::None};
 
     stream << red << "[ERROR]: " << msg << reset << std::endl;
 
@@ -33,8 +31,8 @@ void Error(std::string_view msg, std::ostream& stream)
 
 void Warn(std::string_view msg, std::ostream& stream)
 {
-    color::Modifier red{color::Color::FgYellow, color::Effect::Bold};
-    color::Modifier reset{color::Color::FgDefault, color::Effect::None};
+    Modifier red{Color::FgYellow, Effect::Bold};
+    Modifier reset{Color::FgDefault, Effect::None};
 
     stream << red << "[WARNING]: " << msg << reset << std::endl;
 
@@ -43,7 +41,7 @@ void Warn(std::string_view msg, std::ostream& stream)
 
 void Info(std::string_view msg, std::ostream& stream)
 {
-    color::Modifier reset{color::Color::FgDefault, color::Effect::None};
+    Modifier reset{Color::FgDefault, Effect::None};
 
     stream << reset << "[INFO]: " << msg << reset << std::endl;
 

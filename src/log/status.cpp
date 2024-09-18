@@ -74,7 +74,8 @@ void LoadingBar::Draw()
     std::string barString = "[";
 
     // Get the amount of filled chars in the bar
-    uint8_t length = std::floor(static_cast<float>(barLength) * (percent / 100));
+    uint8_t length =
+        static_cast<uint8_t>(std::floor(static_cast<float>(barLength) * (percent / 100)));
 
     // Sets the filled chars in the bar
     barString += std::string(length, '#');
@@ -83,10 +84,10 @@ void LoadingBar::Draw()
 
     barString += "]";
 
-    color::Modifier nameColor{color::Color::FgYellow, color::Effect::Bold};
-    color::Modifier barColor{color::Color::FgGreen, color::Effect::Bold};
-    color::Modifier descColor{color::Color::FgGray, color::Effect::None};
-    color::Modifier noColor{color::Color::FgDefault, color::Effect::None};
+    Modifier nameColor{Color::FgYellow, Effect::Bold};
+    Modifier barColor{Color::FgGreen, Effect::Bold};
+    Modifier descColor{Color::FgGray, Effect::None};
+    Modifier noColor{Color::FgDefault, Effect::None};
 
     // Erase the line
     std::cout << "\x1b[2K";

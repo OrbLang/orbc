@@ -5,9 +5,6 @@
 
 namespace logging
 {
-
-namespace color
-{
 enum class Color
 {
     FgRed = 31,
@@ -71,5 +68,4 @@ struct Modifier
     }
 #endif
 };
-}; // namespace color
 } // namespace logging
