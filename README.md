@@ -30,16 +30,16 @@ $ cd orbc
 #### 2. Specify what  c++ compiler and linker to use:
 Here llvm's clang and lld are used
 ```bash
-$  export CC=clang; export CXX=clang++; export CC_LD=ld.lld; export CXX_LD=ld.lld
+$  export CC=clang; export CXX=clang++; export CC_LD=lld; export CXX_LD=lld
 ```
 _this can also be done, without exporting, in the next step: `CC=clang CXX=clang++ meson setup ...`_
 
 #### 3. Setup a build directory:
 You can change the prefix to where you want orbc to be installed.
 If left out it will default to `/usr/local` and `C:\` on Windows.
-You can also change the buildtype if desired, for example to `debug` or `debugoptimized`
+You can also change the buildtype if desired, for example to `--buildtype debug` or `--buildtype debugoptimized`
 ```bash
-$ meson setup builddir --prefix=$PWD/install --buildtype release
+$ meson setup builddir --prefix=$PWD/install
 ```
 _(If you wish for `orbc` to not output any color, the flag `-Dno-color=true` can be used)_
 
