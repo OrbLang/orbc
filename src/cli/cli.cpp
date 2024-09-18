@@ -139,7 +139,7 @@ std::expected<int, std::string> orb::cli::ParseArgs(orb::GlobalCtx* ctx, int arg
             {
                 ctx->optLevel = std::stoi(argv[i]);
             }
-            catch (std::exception const& e)
+            catch (...)
             {
                 errorStream << "Expected integer argument for --opt, got \"" << argv[i] << "\"";
                 return std::unexpected(errorStream.str());

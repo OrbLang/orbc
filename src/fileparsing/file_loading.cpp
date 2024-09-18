@@ -1,15 +1,17 @@
 // Project Headers
-#include <__expected/unexpected.h>
-#include <algorithm>
 #include <exception>
+#include <expected>
 #include <fstream>
+#include <ios>
 #include <memory>
 #include <orb/fileparsing/file_loading.hpp>
 #include <orb/log/assert.hpp>
+#include <ranges>
 
 
 // Libraries
 // ICU
+#include <span>
 #include <system_error>
 #include <unicode/errorcode.h>
 #include <unicode/ucnv.h>
@@ -42,67 +44,40 @@ void InitUnicodeParsing(const char* rawFile, int32_t len)
     ucnv_setDefaultName(converterName);
 }
 
-[[clang::always_inline]]
-inline std::expected<icu::UnicodeString, std::string> LoadFilePath(std::filesystem::path path)
-{
-    std::error_code err;
-    int32_t fileSize = static_cast<int32_t>(std::filesystem::file_size(path, err));
-    if (err.value())
-        return std::unexpected{err.message()};
 
-    std::ifstream fileStream{path};
-    if (fileStream.fail())
-        return std::unexpected{"Failed to open file"};
-
-    std::unique_ptr<char[]> fileBytes{new char[fileSize]};
-    fileStream.read(fileBytes.get(), fileSize);
-
-    // fileSize - 1 because of an extra `\n` character at the end of all files
-    return icu::UnicodeString{fileBytes.get(), fileSize - 1};
-}
-
-template <>
-std::expected<icu::UnicodeString, std::string> LoadFile<const char*>(const char* path)
+std::expected<icu::UnicodeString, std::string> LoadFile(std::filesystem::path path)
 {
     try
     {
-        std::filesystem::path filePath{path};
-        return LoadFilePath(filePath);
+        std::error_code err;
+        size_t fileSize = std::filesystem::file_size(path, err);
+        if (err.value())
+            return std::unexpected(err.message());
+
+        if (fileSize == 0)
+            return icu::UnicodeString();
+
+        std::ifstream fileStream{path};
+        if (fileStream.fail())
+            return std::unexpected(std::string("Failed to open file") + path.string());
+
+        // Read from the input stream into memory
+        std::unique_ptr<char[]> fileBytes = std::make_unique_for_overwrite<char[]>(fileSize);
+        fileStream.read(fileBytes.get(), static_cast<std::streamsize>(fileSize));
+        std::span byteSpan(fileBytes.get(), fileSize);
+
+        // Remove whitespace by finding first and last characters that arent whitespace
+        auto Whitespace = [](char c) { return std::isspace(c); };
+        char* begin = std::ranges::find_if_not(byteSpan, Whitespace).base();
+        char* end =
+            std::ranges::find_if_not(byteSpan | std::views::reverse, Whitespace).base().base();
+
+        return icu::UnicodeString(begin, static_cast<int32_t>(end - begin));
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
         return std::unexpected(e.what());
     }
 }
-
-template <>
-std::expected<icu::UnicodeString, std::string> LoadFile<const std::string&>(const std::string& path)
-{
-    try
-    {
-        std::filesystem::path filePath{path};
-        return LoadFilePath(filePath);
-    }
-    catch (std::exception& e)
-    {
-        return std::unexpected(e.what());
-    }
-}
-
-template <>
-std::expected<icu::UnicodeString, std::string> LoadFile<std::string_view>(std::string_view path)
-{
-    try
-    {
-        std::filesystem::path filePath{path};
-        return LoadFilePath(filePath);
-    }
-    catch (std::exception& e)
-    {
-        return std::unexpected(e.what());
-    }
-}
-
-
 
 } // namespace orb::fileparsing

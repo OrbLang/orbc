@@ -1,5 +1,6 @@
 #pragma once
 // Project Headers
+#include <filesystem>
 #include <orb/concepts.hpp>
 
 // STDLIB
@@ -32,7 +33,6 @@ void InitUnicodeParsing(const char* rawFile, int32_t len = -1);
  * @param path The path to file to be loaded
  * @return Returns a UnicodeString or an error message if something goes wrong
  */
-template <IsAnyOf<const char*, const std::string&, std::string_view> T>
-std::expected<icu::UnicodeString, std::string> LoadFile(T path);
+std::expected<icu::UnicodeString, std::string> LoadFile(std::filesystem::path path);
 
 } // namespace orb::fileparsing

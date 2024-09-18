@@ -1,15 +1,26 @@
 CompileFlags:
-  Add: [-std=c++23]
+  Compiler: clang++
+  CompilationDatabase: ./build
 
 Diagnostics:
   Includes:
+    IgnoreHeader:
+      - .*?__
     MissingIncludes: None
   ClangTidy:
     Add: 'bugprone-*'
+    Add: 'clang-analyzer-*'
+    Add: 'cert-*'
     Add: 'cppcoreguidelines-*'
     Add: 'modernize-*'
+    Add: 'openmp-*'
     Add: 'performance-*'
     Add: 'readability-*'
+    Add: 'portability-*'
+    Add: 'misc-const-correctness'
+    Add: 'misc-include-cleaner'
+    Add: 'misc-static-assert'
+    Add: 'misc-redundant-expression'
     Remove: 'bugprone-easily-swappable-parameters'
 
 InlayHints:
@@ -18,7 +29,7 @@ InlayHints:
   Enabled: Yes
   ParameterNames: Yes
   DeducedTypes: Yes
-  TypeNameLimit: 24
 
 Index:
   Background: Build
+  StandardLibrary: Yes

@@ -1,22 +1,44 @@
 project('orbc', 'cpp',
   version : '0.0.1',
-  default_options : ['warning_level=3', 'cpp_std=c++23'])
+  default_options : [
+    'warnlevel=everything',
+    'cpp_std=c++23', # potentially bump to 26?.
+    'optimization=3',
+    'buildtype=release',
+    'debug=false',
+  ],
+)
 
 if get_option('no-color')
-  add_global_arguments('-DORBF_NO_COLOR', language: ['cpp'])
+  add_project_arguments('-DORBF_NO_COLOR', language: 'cpp')
 endif
 
-add_global_arguments('-stdlib=libc++', language: ['cpp'])
-add_global_link_arguments('-stdlib=libc++', language: ['cpp'])
+# Stdlib
+add_project_arguments('-stdlib=libc++', language: 'cpp')
+add_project_link_arguments('-stdlib=libc++', language: 'cpp')
+
+# Warnings and suggestions
+add_project_arguments([
+  '-pedantic',
+  '-fsafe-buffer-usage-suggestions',
+  '-Wno-c++98-compat',
+  '-Wno-c++98-compat-pedantic',
+  '-Wno-pre-c++17-compat',
+  '-Wno-pre-c++17-compat-pedantic',
+  '-Wno-pre-c++20-compat',
+  '-Wno-pre-c++20-compat-pedantic',
+  '-Wno-padded',
+  '-Wno-disabled-macro-expansion',
+  ], language: 'cpp')
 
 ## Libraries
 include = include_directories('include')
 
 # ICU unicode support
-add_global_arguments('-DUNISTR_FROM_STRING_EXPLICIT=explicit', language: ['cpp'])
-icu_uc = dependency('icu-uc')
-icu_io = dependency('icu-io')
-icu_i18n = dependency('icu-i18n')
+add_global_arguments('-DUNISTR_FROM_STRING_EXPLICIT=explicit', language: 'cpp')
+icu_uc = dependency('icu-uc', fallback: ['icu-uc', 'icu-uc_dep'])
+icu_io = dependency('icu-io', fallback: ['icu-io', 'icu-io_dep'])
+icu_i18n = dependency('icu-i18n', fallback: ['icu-i18n', 'icu-i18n_dep'])
 
 # Add all source files
 sources = files()
