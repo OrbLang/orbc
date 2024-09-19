@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
 {
     using namespace orb::fileparsing;
 
-    ASSERT_EQ(argc, 3, "Must give both filename and expected output");
+    ORB_ASSERT(argc == 3, "Must give both filename and expected output");
     InitDefaultUnicode();
 
     const char* filePath = argv[1];
@@ -17,7 +17,8 @@ int main(int argc, char* argv[])
     auto result = LoadFile(filePath);
 
     if (!result.has_value())
-        ASSERT(result.has_value(), result.error());
+        ORB_ASSERT(result.has_value(), result.error());
+
 
     icu::UnicodeString expectedValue(argv[2]);
     icu::UnicodeString value = result.value();

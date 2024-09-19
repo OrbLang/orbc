@@ -1,13 +1,16 @@
 // Project Headers
+#include "orb/log/log.hpp"
+
+#include <orb/fileparsing/file_loading.hpp>
+#include <orb/log/assert.hpp>
+
+// STDLIB
 #include <exception>
 #include <expected>
 #include <fstream>
 #include <ios>
 #include <memory>
-#include <orb/fileparsing/file_loading.hpp>
-#include <orb/log/assert.hpp>
 #include <ranges>
-
 
 // Libraries
 // ICU
@@ -28,18 +31,23 @@ void InitUnicodeParsing(const char* rawFile, int32_t len)
 {
     icu::ErrorCode result;
     UCharsetDetector* detector = ucsdet_open(result);
-    ASSERT(result.isSuccess(), "There was an error opening the characterset detector from ICU lib");
+    if (result.isFailure() != 0)
+        logging::Error("There was an error opening the characterset detector from ICU lib");
 
     ucsdet_setText(detector, rawFile, len, result);
-    ASSERT(result.isSuccess(),
-           "There was an error loading the text while detecting the fileencoding");
+    if (result.isFailure() != 0)
+        logging::Error("There was an error loading the text while detecting the fileencoding");
 
     const UCharsetMatch* charset = ucsdet_detect(detector, result);
-    ASSERT(result.isSuccess(), "There was an error detecting the fileencoding of the current file");
-    ASSERT(charset != NULL, "Couldn't find suitable fileencoding of file");
+    if (result.isFailure() != 0)
+        logging::Error("There was an error detecting the fileencoding of the current file");
+
+    if (result.isFailure() != 0)
+        logging::Error("Couldn't find suitable fileencoding of file");
 
     const char* converterName = ucsdet_getName(charset, result);
-    ASSERT(result.isSuccess(), "Couldn't get name of the files characterset");
+    if (result.isFailure() != 0)
+        logging::Error("Couldn't get name of the files characterset");
 
     ucnv_setDefaultName(converterName);
 }
