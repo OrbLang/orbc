@@ -1,0 +1,52 @@
+checks: >-
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  mpi-*,
+  openmp-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -cppcoreguidelines-avoid-do-while,
+  -misc-unused-parameters,
+  -misc-non-private-member-variables-in-classes,
+  -misc-no-recursion,
+  -misc-use-anonymous-namespace,
+  -misc--include-cleaner,
+
+CheckOptions:
+  - key:        readability-identifier-naming.ClassCase
+    value:      CamelCase
+
+  - key:        readability-identifier-naming.EnumCase
+    value:      CamelCase
+
+  - key:        readability-identifier-naming.UnionCase
+    value:      CamelCase
+    
+  - key:        readability-identifier-naming.FunctionCase
+    value:      CamelCase
+
+  - key:        readability-identifier-naming.MemberCase
+    value:      camelBack
+
+  - key:        readability-identifier-naming.ParameterCase
+    value:      camelBack
+    
+  - key:        readability-identifier-naming.VariableCase
+    value:      camelCase
+
+  - key:        readability-identifier-naming.IgnoreMainLikeFunctions
+    value:      true
+
+  - key:        readability-braces-around-statements
+    value:      1
+
+  - key:        readability-redundant-member-init.IgnoreBaseInCopyConstructors
+    value:      true
+
+  - key:        modernize-use-default-member-init.UseAssignment
+    value:      true

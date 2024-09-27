@@ -1,10 +1,16 @@
 #pragma once
 // Project Headers
-#include <filesystem>
 #include <orb/concepts.hpp>
+#include <orb/fileparsing/error.hpp>
+#include <orb/log/assert.hpp>
+#include <orb/log/log.hpp>
 
 // STDLIB
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <expected>
+#include <filesystem>
 #include <string>
 
 // Libraries
@@ -13,6 +19,8 @@
 
 namespace orb::fileparsing
 {
+using std::filesystem::path;
+
 /**
  * @brief Initializes the ICU converter with the system default name
  */
@@ -28,11 +36,12 @@ void InitDefaultUnicode();
  */
 void InitUnicodeParsing(const char* rawFile, int32_t len = -1);
 
+
 /**
  * @brief Opens a file and returns the files contents as a UnicodeString
  * @param path The path to file to be loaded
  * @return Returns a UnicodeString or an error message if something goes wrong
  */
-std::expected<icu::UnicodeString, std::string> LoadFile(std::filesystem::path path);
+auto LoadFile(const path& path) noexcept -> std::expected<icu::UnicodeString, Error<std::string>>;
 
 } // namespace orb::fileparsing

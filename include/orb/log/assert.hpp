@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string_view>
 
-#define TO_LITTERAL(x) #x
+#define ORB_LITTERAL(x) #x
 #define ORB_EQ(first, second) static_cast<bool>((first) == (second))
 
 #if defined DEBUG
@@ -32,8 +32,8 @@
                                                                                                    \
         logging::Error(description.str());                                                         \
         assert(!static_cast<bool>(expr) && "Internal Orbc assertion failed in file: " __FILE__     \
-                                           ", at line: " TO_LITTERAL(__LINE__) " expr: (" #expr    \
-                                                                               ")");               \
+                                           ", at line: " ORB_LITTERAL(__LINE__) " expr: (" #expr   \
+                                                                                ")");              \
                                                                                                    \
     } while (false)
 #endif

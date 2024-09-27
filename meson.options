@@ -1,1 +1,1 @@
-option('no-color', type: 'boolean', value: false, description: 'Removes all colored outputs from the compiler')
+option('no-color', type: 'feature', value: 'disabled', description: 'Removes all colored outputs from the compiler')

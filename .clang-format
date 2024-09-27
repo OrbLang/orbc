@@ -1,12 +1,32 @@
 BasedOnStyle: LLVM
 
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: false
+  IndentBraces: false # This should be a crime
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+
 ColumnLimit: 100
 
   ## Indents
 IndentWidth: 4
 TabWidth: 4
 BracedInitializerIndentWidth: 4
+AccessModifierOffset: -4
 UseTab: Never
 ConstructorInitializerIndentWidth: 8
 ContinuationIndentWidth: 4
@@ -21,23 +41,34 @@ DerivePointerAlignment: true
   ## Clean code
 RemoveParentheses: ReturnStatement
 RemoveSemicolon: true
-# Public: and Private: offset 
-AccessModifierOffset: -4
+InsertNewlineAtEOF: true
+InsertTrailingCommas: Wrapped
+IntegerLiteralSeparator:
+  Binary: 0
+  Decimal: 3
+  DecimalMinDigits: 5
+  Hex: 0
 
-AlignAfterOpenBracket: Align
+
+# Functions
+AlignAfterOpenBracket: BlockIndent
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BinPackParameters: OnePerLine
+BreakFunctionDefinitionParameters: false
+
+
 AlignArrayOfStructures: Right
 AlignEscapedNewlines: Left
 AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 1
 
-AllowAllArgumentsOnNextLine: true
 AllowShortEnumsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: Never
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: true
-BinPackParameters: true
 BitFieldColonSpacing: Both
 BreakInheritanceList: AfterComma
 BreakConstructorInitializers: BeforeColon
@@ -45,11 +76,10 @@ CompactNamespaces: true
 EmptyLineAfterAccessModifier: Leave
 EmptyLineBeforeAccessModifier: LogicalBlock
 FixNamespaceComments: true
-MaxEmptyLinesToKeep: 9
+MaxEmptyLinesToKeep: 4
 
   ## Includes
 IncludeBlocks: Regroup
-
 
 KeepEmptyLinesAtTheStartOfBlocks: false
 ObjCSpaceAfterProperty: true

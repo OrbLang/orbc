@@ -16,12 +16,11 @@ int main(int argc, char* argv[])
 
     auto result = LoadFile(filePath);
 
-    if (!result.has_value())
-        ORB_ASSERT(result.has_value(), result.error());
+    ORB_ASSERT(result.has_value(), result.error());
 
 
     icu::UnicodeString expectedValue(argv[2]);
-    icu::UnicodeString value = result.value();
+    icu::UnicodeString value(result.value());
 
     if (expectedValue != value)
     {
