@@ -22,10 +22,9 @@ static inline char get(std::basic_ifstream<char>& stream)
 }
 
 Lexer::Lexer(const char* path)
-        : filestream{std::ifstream{path}}, identifier{std::string{""}}, op{ast::Operator::Add},
-          prevTokPos(filestream.tellg())
-{
-}
+    : filestream {std::ifstream {path}}, identifier {std::string {""}}, op {ast::Operator::Add},
+      prevTokPos(filestream.tellg())
+{}
 
 void Lexer::SkipWhitespace()
 {
@@ -61,7 +60,7 @@ bool Lexer::NextNumber()
     if (!IsValidNumberChar(peek(filestream)))
         return false;
 
-    std::string numberStr{};
+    std::string numberStr {};
     numberStr = get(filestream);
 
     type = numberStr == "." ? Type::Flow : Type::Rune;

@@ -1,5 +1,6 @@
 #pragma once
 // STDLIB
+#include <string>
 #include <vector>
 
 namespace orb
@@ -24,13 +25,15 @@ struct GlobalCtx
     /// Default initializer for `GlobalCtx`
     static inline GlobalCtx Default()
     {
-        return GlobalCtx{.outPath = "",
-                         .fileInclude = {},
-                         .libInclude = {},
-                         .stdlib = "",
-                         .optLevel = 1,
-                         .targetPlatform = "",
-                         .inReleaseMode = false};
+        return GlobalCtx {
+            .outPath = "",
+            .fileInclude = {},
+            .libInclude = {},
+            .stdlib = "",
+            .optLevel = 1,
+            .targetPlatform = "",
+            .inReleaseMode = false
+        };
     }
 };
 } // namespace orb

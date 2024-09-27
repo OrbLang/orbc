@@ -2,7 +2,6 @@
 
 // STDLIB
 #include <iostream>
-#include <ostream>
 #include <string_view>
 
 #ifdef LOGGING_LIB

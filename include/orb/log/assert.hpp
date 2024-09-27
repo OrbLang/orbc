@@ -21,8 +21,10 @@
 #define ORB_ASSERT(expr, errMsg)                                                                   \
     do                                                                                             \
     {                                                                                              \
-        static_assert(orb::StdOstreamPrintable<decltype(errMsg)>,                                  \
-                      "errMsg needs to be printable to cout and cerr");                            \
+        static_assert(                                                                             \
+            orb::StdOstreamPrintable<decltype(errMsg)>,                                            \
+            "errMsg needs to be printable to cout and cerr"                                        \
+        );                                                                                         \
         if (static_cast<bool>(expr))                                                               \
             break;                                                                                 \
                                                                                                    \
@@ -31,9 +33,9 @@
                     << " with message: " << (errMsg);                                              \
                                                                                                    \
         logging::Error(description.str());                                                         \
-        assert(!static_cast<bool>(expr) && "Internal Orbc assertion failed in file: " __FILE__     \
-                                           ", at line: " ORB_LITTERAL(__LINE__) " expr: (" #expr   \
-                                                                                ")");              \
-                                                                                                   \
+        assert(                                                                                    \
+            !static_cast<bool>(expr) && "Internal Orbc assertion failed in file: " __FILE__        \
+                                        ", at line: " ORB_LITTERAL(__LINE__) " expr: (" #expr ")"  \
+        );                                                                                         \
     } while (false)
 #endif

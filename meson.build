@@ -8,41 +8,43 @@ project('orbc', 'cpp',
     'debug=false',
   ],
 )
+compile_options = []
+link_options = []
+
+cpp = meson.get_compiler('cpp')
 
 if get_option('no-color').enabled()
-  add_project_arguments('-DORBF_NO_COLOR', language: 'cpp')
+  compile_options += '-DORBF_NO_COLOR'
 endif
 
-# Stdlib
-add_project_arguments('-stdlib=libc++', language: 'cpp')
-add_project_link_arguments('-stdlib=libc++', language: 'cpp')
+# Change stdlib
+if get_option('stdlib') != ''
+  stdlib = get_option('stdlib')
+  message('Setting standard library to: "' + stdlib + '"')
+  stdlib_option = cpp.get_supported_arguments(
+    '-stdlib=' + stdlib,
+    checked: 'require'
+  )
+
+  compile_options += stdlib_option
+endif
 
 # Warnings and suggestions
 add_project_arguments([
   '-pedantic',
   '-fsafe-buffer-usage-suggestions',
-  ], language: 'cpp')
+  ],
+  language: 'cpp'
+)
 
-## Libraries
 include = include_directories('include')
 
 # ICU unicode support
 add_global_arguments('-DUNISTR_FROM_STRING_EXPLICIT=explicit', language: 'cpp')
-
-icu_uc = dependency('icu-uc', fallback: ['icu-uc', 'icu-uc_dep'])
-icu_io = dependency('icu-io', fallback: ['icu-io', 'icu-io_dep'])
+icu_uc   = dependency('icu-uc', fallback: ['icu-uc', 'icu-uc_dep'])
+icu_io   = dependency('icu-io', fallback: ['icu-io', 'icu-io_dep'])
 icu_i18n = dependency('icu-i18n', fallback: ['icu-i18n', 'icu-i18n_dep'])
 
-# Add all source files
-sources = files()
-subdir('src')
-
-executable('orbc',
-           'src/main.cpp',
-           sources,
-           install : true,
-           include_directories : [include],
-           dependencies: [icu_uc, icu_io, icu_i18n])
-
-# Run tests
-subdir('tests')
+if get_option('build-tests').enabled()
+  subdir('tests')
+endif

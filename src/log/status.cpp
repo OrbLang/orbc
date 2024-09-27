@@ -14,12 +14,16 @@
 
 namespace logging
 {
-static std::vector<LoadingBar*> loadingbarList{};
+static std::vector<LoadingBar*> loadingbarList {};
 
-LoadingBar::LoadingBar(std::string_view name, float percent, std::string_view description,
-                       bool deleteBar)
-        : percent{percent}, name{name}, description{description}, rowNum{totalLineCount++},
-          deleteBar{deleteBar}
+LoadingBar::LoadingBar(
+    std::string_view name,
+    float percent,
+    std::string_view description,
+    bool deleteBar
+)
+    : percent(percent), name(name), description(description), rowNum(totalLineCount++),
+      deleteBar(deleteBar)
 {
     loadingbarList.push_back(this);
     std::cout << "\n";
@@ -74,8 +78,8 @@ void LoadingBar::Draw()
     std::string barString = "[";
 
     // Get the amount of filled chars in the bar
-    uint8_t length =
-        static_cast<uint8_t>(std::floor(static_cast<float>(barLength) * (percent / 100)));
+    uint16_t length =
+        static_cast<uint16_t>(std::floor(static_cast<float>(barLength) * (percent / 100)));
 
     // Sets the filled chars in the bar
     barString += std::string(length, '#');
@@ -84,10 +88,10 @@ void LoadingBar::Draw()
 
     barString += "]";
 
-    Modifier nameColor{Color::FgYellow, Effect::Bold};
-    Modifier barColor{Color::FgGreen, Effect::Bold};
-    Modifier descColor{Color::FgGray, Effect::None};
-    Modifier noColor{Color::FgDefault, Effect::None};
+    Modifier nameColor {Color::FgYellow, Effect::Bold};
+    Modifier barColor {Color::FgGreen, Effect::Bold};
+    Modifier descColor {Color::FgGray, Effect::None};
+    Modifier noColor {Color::FgDefault, Effect::None};
 
     // Erase the line
     std::cout << "\x1b[2K";

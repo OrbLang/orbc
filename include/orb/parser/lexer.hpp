@@ -17,8 +17,7 @@ class Lexer
 {
 public:
     struct TokenData
-    {
-    };
+    {};
 
 private:
     std::ifstream filestream;

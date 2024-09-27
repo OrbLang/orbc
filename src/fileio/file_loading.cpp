@@ -1,5 +1,5 @@
 // Project Headers
-#include <orb/fileparsing/file_loading.hpp>
+#include <orb/fileio/file_loading.hpp>
 #include <orb/log/assert.hpp>
 #include <orb/log/log.hpp>
 
@@ -21,7 +21,7 @@
 
 using namespace std::string_literals;
 
-namespace orb::fileparsing
+namespace orb
 {
 
 void InitDefaultUnicode() { ucnv_setDefaultName(ucnv_getDefaultName()); }
@@ -97,4 +97,4 @@ auto LoadFile(const path& filePath) noexcept
     }
 }
 
-} // namespace orb::fileparsing
+} // namespace orb

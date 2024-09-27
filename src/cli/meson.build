@@ -1,1 +1,0 @@
-sources += files('cli.cpp')

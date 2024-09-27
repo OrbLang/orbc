@@ -1,14 +1,11 @@
 #pragma once
 // Project Headers
 #include <orb/concepts.hpp>
-#include <orb/fileparsing/error.hpp>
+#include <orb/fileio/error.hpp>
 #include <orb/log/assert.hpp>
 #include <orb/log/log.hpp>
 
 // STDLIB
-#include <cstddef>
-#include <cstdint>
-#include <cstring>
 #include <expected>
 #include <filesystem>
 #include <string>
@@ -17,7 +14,7 @@
 // ICU
 #include <unicode/unistr.h>
 
-namespace orb::fileparsing
+namespace orb
 {
 using std::filesystem::path;
 
@@ -44,4 +41,4 @@ void InitUnicodeParsing(const char* rawFile, int32_t len = -1);
  */
 auto LoadFile(const path& path) noexcept -> std::expected<icu::UnicodeString, Error<std::string>>;
 
-} // namespace orb::fileparsing
+} // namespace orb

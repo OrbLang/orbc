@@ -18,23 +18,25 @@ void orb::cli::PrintHelpPage(char* path)
     std::print("ORB COMPILER (ORBC) v{}\n", VERSION);
     std::print("Path: {}\n", path);
 
-    puts("OPTIONS:\n"
-         "\t--help, -h                      Prints the help page\n"
-         "\t--version, -v                   Prints the version\n"
-         "\t<files>...                      The paths to the files that will be included in the "
-         "compilation\n"
-         "\t[--out, -o] <path>              The path to where the resulting executable should be "
-         "stored\n"
-         "\t[--lib-include, -l] <paths>...  A list of space seperated paths to libraries that "
-         "should "
-         "be included in the compilation\n"
-         "\t[--stdlib] <path>               The path to the standard library to use. Is "
-         "$HOME/.orb/stdlib by default\n"
-         "\t[--opt] <level>                 The optimization level of the program. Is an integer "
-         "between 1 and 3\n"
-         "\t[--target] <platform>           Specifies the target platform of the program\n"
-         "\t[--release]                     Use this to compile in release mode, otherwise it will "
-         "compile in debug mode\n");
+    puts(
+        "OPTIONS:\n"
+        "\t--help, -h                      Prints the help page\n"
+        "\t--version, -v                   Prints the version\n"
+        "\t<files>...                      The paths to the files that will be included in the "
+        "compilation\n"
+        "\t[--out, -o] <path>              The path to where the resulting executable should be "
+        "stored\n"
+        "\t[--lib-include, -l] <paths>...  A list of space seperated paths to libraries that "
+        "should "
+        "be included in the compilation\n"
+        "\t[--stdlib] <path>               The path to the standard library to use. Is "
+        "$HOME/.orb/stdlib by default\n"
+        "\t[--opt] <level>                 The optimization level of the program. Is an integer "
+        "between 1 and 3\n"
+        "\t[--target] <platform>           Specifies the target platform of the program\n"
+        "\t[--release]                     Use this to compile in release mode, otherwise it will "
+        "compile in debug mode\n"
+    );
 }
 
 
@@ -42,7 +44,7 @@ std::expected<int, std::string> orb::cli::ParseArgs(orb::GlobalCtx* ctx, int arg
 {
     int argsSupplied = 0;
 
-    std::stringstream errorStream{""};
+    std::stringstream errorStream {""};
 
     // If there are isn't any given arguments.
     // Argv is 1 long by default, since argv[0] holds the path to
@@ -195,7 +197,7 @@ std::expected<int, std::string> orb::cli::ParseArgs(orb::GlobalCtx* ctx, int arg
     // Implicit values if not given an explicit value
     if (ctx->outPath == "")
     {
-        std::stringstream result{""};
+        std::stringstream result {""};
 
         for (char c : ctx->fileInclude[0])
         {

@@ -3,5 +3,4 @@
 #include <orb/parser/lexer.hpp>
 
 namespace parser
-{
-} // namespace parser
+{} // namespace parser

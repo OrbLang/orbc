@@ -201,8 +201,7 @@ private:
 };
 
 class StatementNode : public AstNode
-{
-};
+{};
 
 /// Holds a block of nodes. Both `ExprNode` and `StatementNode` are valid.
 class BlockNode : public StatementNode

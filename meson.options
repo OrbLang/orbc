@@ -1,1 +1,4 @@
 option('no-color', type: 'feature', value: 'disabled', description: 'Removes all colored outputs from the compiler')
+option('stdlib', type: 'string', value: '', description: 'Change the -stdlib flag when compiling')
+option('build-tests', type: 'feature', value: 'enabled', description: '''Build the tests when compiling.\n
+                                                                       Necessary for running the `meson test` command''')

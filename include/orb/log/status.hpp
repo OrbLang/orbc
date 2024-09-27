@@ -2,6 +2,7 @@
 
 // STDLIB
 #include <cstdint>
+#include <string>
 #include <string_view>
 
 namespace logging
@@ -20,12 +21,12 @@ public:
 
 private:
     float percent;
-    std::string_view name;
-    std::string_view description;
+    std::string name;
+    std::string description;
     int rowNum;
     bool deleteBar;
 
-    static constexpr uint8_t barLength = 20;
+    static constexpr uint16_t barLength = 20;
     void Draw();
 };
 

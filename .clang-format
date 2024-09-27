@@ -1,5 +1,3 @@
-BasedOnStyle: LLVM
-
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: false
@@ -28,7 +26,7 @@ TabWidth: 4
 BracedInitializerIndentWidth: 4
 AccessModifierOffset: -4
 UseTab: Never
-ConstructorInitializerIndentWidth: 8
+ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
 IndentAccessModifiers: false
 
@@ -39,6 +37,7 @@ PointerAlignment: Left
 DerivePointerAlignment: true
 
   ## Clean code
+AlignOperands: AlignAfterOperator
 RemoveParentheses: ReturnStatement
 RemoveSemicolon: true
 InsertNewlineAtEOF: true
@@ -85,3 +84,4 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
 SpacesBeforeTrailingComments: 1
+SpaceBeforeCpp11BracedList: true

@@ -1,5 +1,5 @@
 // Project Headers
-#include <orb/fileparsing/file_loading.hpp>
+#include <orb/fileio/file_loading.hpp>
 #include <orb/log/assert.hpp>
 
 // STDLIB
@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[])
 {
-    using namespace orb::fileparsing;
+    using namespace orb;
 
     ORB_ASSERT(argc == 3, "Must give both filename and expected output");
     InitDefaultUnicode();

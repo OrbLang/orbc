@@ -3,6 +3,9 @@
 // Project Headers
 #include <orb/concepts.hpp>
 
+namespace orb
+{
+
 template <class T>
     requires orb::StdPrintable<T> || orb::StdOstreamPrintable<T>
 class Error
@@ -26,3 +29,5 @@ public:
         return stream;
     }
 };
+
+} // namespace orb
