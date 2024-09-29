@@ -71,6 +71,7 @@ AlwaysBreakTemplateDeclarations: Yes
 BitFieldColonSpacing: Both
 BreakInheritanceList: AfterComma
 BreakConstructorInitializers: BeforeColon
+PackConstructorInitializers: NextLineOnly
 CompactNamespaces: true
 EmptyLineAfterAccessModifier: Leave
 EmptyLineBeforeAccessModifier: LogicalBlock
