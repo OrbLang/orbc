@@ -63,6 +63,10 @@ AlignEscapedNewlines: Left
 AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 1
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
 
 AllowShortEnumsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: Never
