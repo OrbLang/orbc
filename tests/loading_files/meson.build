@@ -9,7 +9,7 @@ test_exe = executable('loading_file_test',
     icu_io,
     icu_i18n
   ],
-  include_directories : [include],
+  include_directories : include,
 )
 
 testFiles = files('normaltest.txt', 'emojitest.txt', 'multilingualtest.txt')
@@ -23,8 +23,6 @@ testArgs = []
 foreach idx : range(testFiles.length())
   testArgs += [[testFiles[idx], testInput[idx]]]
 endforeach
-
-message('Num of tests = ' + testArgs.length().to_string())
 
 foreach testArg : testArgs
   test('loading_files', test_exe, args: testArg)

@@ -4,10 +4,15 @@
 #include <algorithm>
 #include <concepts>
 #include <iterator>
+#include <memory>
 #include <optional>
+#include <ranges>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
+namespace orb
+{
 
 /** @brief A simpler iterator that owns it's data, and without the use of operator overloading.
  *  A `Cursor` should only be used when c++ iterator algorithms will not be used,
@@ -16,19 +21,22 @@
  *  The `Cursor` class only provides a more explicit interface compared to c++ iterators,
  *  and provides more safety by returning `std::optional<T>` and doesn't throw any exceptions.
  */
-template <typename T, typename AllocT = std::vector<const T>::allocator_type>
+template <typename T, typename AllocT = typename std::vector<std::remove_cv_t<T>>::allocator_type>
 class Cursor
 {
 public:
-    using reference = const T&;
-    using value_type = const T;
+    using pointer        = const T*;
+    using value_type     = T;
     using allocator_type = AllocT;
 
 private:
-    using ReturnT = std::optional<reference>;
+    using ReturnT = std::optional<pointer>;
+
+    // Maybe std::unique_ptr<value_type[]> is better
+    // as there is less overhead?
 
     /// Owned `T` array to iterate over
-    std::vector<const T, AllocT> data;
+    std::vector<value_type, AllocT> data;
     size_t current = 0;
 
 public:
@@ -38,18 +46,22 @@ public:
 
     /// Copy constructor, copies data with and after the current value
     /// and constructs a new Cursor with copied data.
-    constexpr Cursor(const Cursor& other) noexcept;
+    explicit constexpr Cursor(const Cursor& other) noexcept = default;
 
     /// Move constructor, overtakes ownership of data.
-    constexpr Cursor(Cursor&& other) noexcept = default;
+    explicit constexpr Cursor(Cursor&& other) noexcept = default;
 
     /// Copies data with and after the current value
     /// and constructs a new Cursor with copied data.
-    constexpr auto operator=(const Cursor& other) noexcept -> Cursor&;
+    constexpr auto operator=(const Cursor& other) noexcept -> Cursor&
+        requires std::copy_constructible<value_type>
+    {
+        data.assign(other.data.begin() + other.current, other.data.end());
+    }
 
     /// Moves and takes ownership of the data inside other
     /// This releases the data of this Cursor
-    constexpr auto operator=(Cursor&& other) noexcept -> Cursor&;
+    constexpr auto operator=(Cursor&& other) noexcept -> Cursor& = default;
 
 
     // Contructors copying data
@@ -74,24 +86,13 @@ public:
         : Cursor(array, size)
     {}
 
-    /*  @brief Construct a Cursor by copying from a vector
-     *
-     *  @param vec The vector to copy
-     */
-    explicit constexpr Cursor(const std::vector<T, AllocT>& vec) noexcept
-        requires std::copy_constructible<T>
-        : data(vec)
-    {}
-
     /*  @breif Construct a Cursor by copying from any range
      *
      *  @param inputRange The range to copy
      */
-    explicit constexpr Cursor(const std::ranges::input_range auto& inputRange) noexcept
-        : data(std::ranges::distance(inputRange))
-    {
-        std::ranges::copy(inputRange, std::back_inserter(data));
-    }
+    explicit constexpr Cursor(const std::ranges::input_range auto& range) noexcept
+        : data(std::from_range, range)
+    {}
 
 
     // Contructors moving data, and taking ownership
@@ -108,27 +109,27 @@ public:
         array = nullptr;
     }
 
-
-    /*  @brief Construct a Cursor by taking ownership of the data in a vector
-     *
-     *  @param vec The vector which's data will be moved
-     */
-    explicit constexpr Cursor(std::vector<T, AllocT>&& vec) noexcept
-        : data(std::move(vec))
-    {
-        vec.clear();
-    }
-
     /*  @brief Construct a Cursor by moving the data from a range
      *  taking ownership of the data inside
      *
      *  @param inputRange The range to move values from
      */
-    explicit constexpr Cursor(std::ranges::input_range auto&& inputRange) noexcept
-        : data(std::ranges::distance(inputRange))
-    {
-        std::ranges::move(std::move(inputRange), std::back_inserter(data));
-    }
+    explicit constexpr Cursor(std::ranges::input_range auto&& range) noexcept
+        : data(
+              std::make_move_iterator(std::ranges::begin(range)),
+              std::make_move_iterator(std::ranges::end(range))
+          )
+
+    // Or with ranges: (Not sure wich is best...)
+
+    /* : data(                                                  */
+    /*   std::from_range,                                       */
+    /*       std::ranges::subrange(                             */
+    /*           std::move_iterator(std::ranges::begin(range)), */
+    /*           std::move_sentinel(std::ranges::end(range))    */
+    /*       )                                                  */
+    /*   )                                                      */
+    {}
 
 
     // iterator functions, with a safety layer
@@ -140,12 +141,13 @@ public:
      *  @return Returns a `const T&` if the current value is valid,
      *  otherwise an invalid `nullopt` is returned.
      */
-    [[nodiscard]] auto Get() const noexcept -> ReturnT
+    [[nodiscard]]
+    constexpr auto Get() const noexcept -> ReturnT
     {
         if (current >= data.size())
             return std::nullopt;
 
-        return data[current];
+        return std::make_optional(GetPointerAt(current));
     }
 
     /*  @breif Get the value currently pointed to inside the Cursor.
@@ -154,10 +156,12 @@ public:
      *  @return Returns a `const T&` if the current value is valid,
      *  otherwise an invalid `nullopt` is returned.
      */
-    [[nodiscard]] auto Eat() noexcept -> ReturnT
+    [[nodiscard("Use `Next()` method to iterate, instead of `Eat()`")]]
+    constexpr auto Eat() noexcept -> ReturnT
     {
-        decltype(auto) oldVal = Get();
+        ReturnT oldVal = Get();
         Next();
+
         return oldVal;
     }
 
@@ -167,26 +171,45 @@ public:
      *  @return Returns a `const T&` if the n'th value exists,
      *  otherwise an invalid `nullopt` is returned.
      */
-    [[nodiscard]] auto Peek(size_t distance) const noexcept -> ReturnT
+    [[nodiscard]]
+    constexpr auto Peek(size_t distance) const noexcept -> ReturnT
     {
         const size_t peekIndex = current + distance;
         if (peekIndex >= data.size())
             return std::nullopt;
 
-        return data[peekIndex];
+        return std::make_optional(GetPointerAt(peekIndex));
     }
 
     /*  @brief Moves the Cursor to the next value in the internal array.
      *
      *  @return Returns `*this`.
      */
-    auto Next() noexcept -> Cursor&
+    constexpr auto Next() noexcept -> Cursor&
     {
         current++;
         return *this;
     }
 
+    /*  @brief Checks whether the `Cursor` has anymore values.
+        `IsValid()` is a helper function, and is a simpler alias for `has_value()`
+        on the `std::optional`.
+     *
+     *  ```cpp
+     *  cursor.IsValid()
+     *  ```
+     *  same as:
+     *
+     *  ```cpp
+     *  cursor.Get().has_value();
+     *  ```
+     *
+     *  @return Returns true if there are values left, false if there are not
+     */
+    constexpr auto IsValid() noexcept -> bool { return Get().has_value(); }
+
 private:
-    /// Get the remaining amount of objects to iterate over.
-    auto RemainingLength() -> size_t { return data.size() - current; }
+    auto GetPointerAt(size_t idx) const noexcept -> pointer { return std::addressof(data[idx]); }
 };
+
+} // namespace orb

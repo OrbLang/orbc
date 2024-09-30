@@ -6,3 +6,11 @@ add_test_setup('Basic',
 
 
 subdir('loading_files')
+
+cursor_test = executable(
+  'cursor_test',
+  'data_structures/cursor.cpp',
+  include_directories : include,
+)
+
+test('cursor_test', cursor_test)
