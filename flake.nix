@@ -1,5 +1,5 @@
 {
-  description = "A very basic flake";
+  description = "A magical programming language for bored wizards";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
