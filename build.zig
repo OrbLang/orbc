@@ -14,6 +14,14 @@ pub fn build(b: *std.Build) void {
         }),
     });
 
+    const zg = b.dependency("zg", .{});
+    exe.root_module.addImport("Properties", zg.module("Properties"));
+    exe.root_module.addImport("codepoints", zg.module("code_point"));
+    exe.root_module.addImport("LetterCasing", zg.module("LetterCasing"));
+
+    const clap = b.dependency("clap", .{});
+    exe.root_module.addImport("clap", clap.module("clap"));
+
     b.installArtifact(exe);
 
     const run_step = b.step("run", "Run the app");
