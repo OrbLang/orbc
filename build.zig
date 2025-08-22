@@ -14,14 +14,6 @@ pub fn build(b: *std.Build) void {
         }),
     });
 
-    const parsing_mod = b.createModule(.{
-        .root_source_file = b.path("src/parsing.zig"),
-        .target = target,
-        .optimize = optimize,
-        .imports = &.{},
-    });
-    exe.root_module.addImport("parsing", parsing_mod);
-
     const zg = b.dependency("zg", .{});
     exe.root_module.addImport("Properties", zg.module("Properties"));
     exe.root_module.addImport("codepoints", zg.module("code_point"));
