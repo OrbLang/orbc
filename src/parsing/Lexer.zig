@@ -85,11 +85,9 @@ pub fn init(reader: File.Reader, props: Properties) Lexer {
     };
 }
 
-pub const LexerNextError = error{HugeIdentifier};
-
 /// Get the next Token and advance the internal iterator
 /// Identifiers returned by this function are invalidated on the next call
-pub fn next(self: *Lexer) LexerNextError!?Token {
+pub fn next(self: *Lexer) ?Token {
     const begin = self.peekCodePoint() orelse return null;
     var i: std.meta.Int(.unsigned, std.math.log2(identifier_buf.len)) = 0;
 
@@ -102,7 +100,7 @@ pub fn next(self: *Lexer) LexerNextError!?Token {
         while (self.peekCodePoint()) |codepoint| {
             // If the identifier_buf is about to overflow then we error instead
             if (i == std.math.maxInt(@TypeOf(i))) {
-                return LexerNextError.HugeIdentifier;
+                return Token{ .identifier = identifier_buf[0..i] };
             }
 
             if (self.props.isXidContinue(codepoint.code)) {
@@ -148,7 +146,7 @@ pub fn next(self: *Lexer) LexerNextError!?Token {
 
 /// Peek the next Token without advancing the internal iterator
 /// Identifiers returned by this function are invalidated on the next call
-pub fn peek(self: Lexer) LexerNextError!?Token {
+pub fn peek(self: Lexer) ?Token {
     // --BENCHMARK--
     // Maybe make the function non const so it doesn't copy the lexer
     // Benchmark this at some point...
@@ -208,9 +206,9 @@ test "Parsing simple file" {
     const there = try unicode_help.encode("there", testing.allocator);
     defer testing.allocator.free(there);
 
-    try std.testing.expectEqual(try lexer.next(), Lexer.Token{ .keyword = .create });
-    try std.testing.expectEqualSlices(u21, (try lexer.next()).?.identifier, hello);
-    try std.testing.expectEqualSlices(u21, (try lexer.next()).?.identifier, there);
-    try std.testing.expectEqual(try lexer.next(), Lexer.Token{ .keyword = .spell });
+    try std.testing.expectEqual(Lexer.Token{ .keyword = .create }, lexer.next());
+    try std.testing.expectEqualSlices(u21, hello, lexer.next().?.identifier);
+    try std.testing.expectEqualSlices(u21, there, lexer.next().?.identifier);
+    try std.testing.expectEqual(Lexer.Token{ .keyword = .spell }, lexer.next());
     try std.testing.expectEqual(null, try lexer.next());
 }
