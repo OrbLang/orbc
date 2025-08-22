@@ -1,38 +1,62 @@
 const std = @import("std");
+const log = @import("log.zig");
 
 const ErrorBuilder = @This();
 
 allocator: std.mem.Allocator,
-list: std.ArrayList(ErrCtx),
-
-pub fn append(self: *ErrorBuilder, loc: Loc, msg: []const u8) std.mem.Allocator.Error!void {
-    try self.list.append(.{ .msg = try self.allocator.dupe(u8, msg), .loc = loc });
-}
-
-pub fn appendf(self: *ErrorBuilder, loc: Loc, fmt: []const u8, args: anytype) std.mem.Allocator.Error!void {
-    const msg = try std.fmt.allocPrint(self.allocator, fmt, args);
-    try self.list.append(.{ .msg = msg, .loc = loc });
-}
+list: std.ArrayList(Entry),
+err_count: usize = 0,
+warn_count: usize = 0,
 
 pub fn init(allocator: std.mem.Allocator) ErrorBuilder {
     return .{
+        .allocator = allocator,
         .list = .init(allocator),
     };
 }
-
 pub fn deinit(self: ErrorBuilder) void {
-    for (self.list.items) |err| {
-        self.allocator.free(err.msg);
+    for (self.list.items) |e| {
+        self.allocator.free(e.msg);
+        self.allocator.free(e.loc.file);
     }
     self.list.deinit();
 }
 
+pub fn err(self: *ErrorBuilder, loc: Loc, msg: []const u8) std.mem.Allocator.Error!void {
+    const owned_msg = try self.allocator.dupe(u8, msg);
+    const owned_loc: Loc = .{
+        .file = try self.allocator.dupe(u8, loc.file),
+        .line = loc.line,
+        .col = loc.col,
+    };
+
+    try self.list.append(.{ .msg = owned_msg, .loc = owned_loc, .type = .err });
+}
+
+pub fn warn(self: *ErrorBuilder, loc: Loc, msg: []const u8) std.mem.Allocator.Error!void {
+    const owned_msg = try self.allocator.dupe(u8, msg);
+    const owned_loc: Loc = .{
+        .file = try self.allocator.dupe(u8, loc.file),
+        .line = loc.line,
+        .col = loc.col,
+    };
+
+    try self.list.append(.{ .msg = owned_msg, .loc = owned_loc, .type = .warn });
+}
+
+pub fn flush(self: *ErrorBuilder) void {
+    _ = self;
+    log.todo(@src(), "Add error/warning formatting and printing\n", .{});
+}
+
 pub const Loc = struct {
+    file: []const u8,
     line: usize,
     col: usize,
 };
 
-pub const ErrCtx = struct {
+pub const Entry = struct {
     msg: []const u8,
-    loc: struct { line: usize, col: usize },
+    loc: Loc,
+    type: enum { err, warn },
 };
