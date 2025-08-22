@@ -1,14 +1,25 @@
 const std = @import("std");
+const parsing = @import("../parsing.zig");
+const log = @import("../log.zig");
+const types = @import("types.zig");
+
+pub const TypeInfo = types.TypeInfo;
 
 const AstNode = @This();
 
 inner: AstNodeInner,
-typeinfo: TypeInfo,
+typeinfo: TypeInfo = .{ .prim = .void },
+is_statement: bool = false,
 
 pub fn deinit(self: AstNode, allocator: std.mem.Allocator) void {
     self.inner.deinit(allocator);
     self.typeinfo.deinit(allocator);
 }
+
+pub const IdentTypePair = struct {
+    ident: []const u21,
+    typeinfo: TypeInfo,
+};
 
 pub const AstLiteral = union(enum) {
     rune: isize,
@@ -38,7 +49,7 @@ pub const AstLiteral = union(enum) {
                     field.typeinfo.deinit(allocator);
                 }
             },
-            _ => {},
+            else => {},
         }
     }
 };
@@ -60,17 +71,18 @@ pub const Symbol = enum {
 pub const SpellType = enum {
     spell,
     cantrip,
+
+    pub fn fromLexKeyword(kw: parsing.Token.Keyword) ?SpellType {
+        return switch (kw) {
+            .spell => .spell,
+            .cantrip => .cantrip,
+            else => null,
+        };
+    }
 };
 
 pub const Qualifier = enum {
     @"pub",
-};
-
-pub const TypeInfo = struct {
-    pub fn deinit(self: TypeInfo, allocator: std.mem.Allocator) void {
-        _ = self;
-        _ = allocator;
-    }
 };
 
 pub const AstRoot = struct {
@@ -111,25 +123,27 @@ pub const AstNodeInner = union(enum) {
     /// Assign an already created variable
     assign_var: struct {
         variable: *AstNode,
-        valie: *AstNode,
+        value: *AstNode,
     },
     /// Declare a new variable, and possibly give it a value
     decl_var: struct {
         ident: []const u21,
         is_const: bool,
         value: ?*AstNode,
+        typeinfo: ?TypeInfo,
     },
     /// Declare a spell
     decl_spell: struct {
         spelltype: SpellType = .spell,
         qualifiers: []Qualifier,
         ident: []const u21,
-        params: []struct { ident: []const u21, typeinfo: TypeInfo },
+        params: []IdentTypePair,
+        ret_type: TypeInfo,
         body: *AstNode,
     },
     /// A block of nodes
     block: struct {
-        label: ?[]const u21,
+        label: ?[]const u21 = null,
         nodes: []AstNode,
     },
     @"return": *AstNode,
@@ -176,11 +190,30 @@ pub const AstNodeInner = union(enum) {
 
                 allocator.free(data.params);
             },
+            .index_into => |data| {
+                data.index.deinit(allocator);
+                allocator.destroy(data.index);
+
+                data.variable.deinit(allocator);
+                allocator.destroy(data.variable);
+            },
+            .assign_var => |data| {
+                data.variable.deinit(allocator);
+                allocator.destroy(data.variable);
+
+                data.value.deinit(allocator);
+                allocator.destroy(data.value);
+            },
             .decl_var => |data| {
                 allocator.free(data.ident);
+
                 if (data.value) |val| {
                     val.deinit(allocator);
                     allocator.destroy(val);
+                }
+
+                if (data.typeinfo) |t| {
+                    t.deinit(allocator);
                 }
             },
             .decl_spell => |data| {
@@ -190,10 +223,13 @@ pub const AstNodeInner = union(enum) {
 
                 allocator.free(data.qualifiers);
 
-                for (data.params) |param|
-                    param.deinit(allocator);
-
+                for (data.params) |param| {
+                    allocator.free(param.ident);
+                    param.typeinfo.deinit(allocator);
+                }
                 allocator.free(data.params);
+
+                data.ret_type.deinit(allocator);
             },
             .block => |data| {
                 if (data.label) |label|
@@ -235,7 +271,28 @@ pub const AstNodeInner = union(enum) {
     pub fn isTopLevelDef(self: AstNodeInner) bool {
         return switch (self) {
             .decl_var, .decl_spell, .block, .import => true,
-            .binop, .unop, .literal, .read_var, .ready_spell, .@"return", .@"break", .@"continue", .cast => false,
+            .binop, .unop, .literal, .read_var, .ready_spell, .index_into, .assign_var, .@"return", .@"break", .@"continue", .cast => false,
+        };
+    }
+
+    pub fn needsEol(self: AstNodeInner) bool {
+        return switch (self) {
+            .decl_spell => true,
+            .decl_var,
+            .block,
+            .import,
+            .binop,
+            .unop,
+            .literal,
+            .read_var,
+            .ready_spell,
+            .index_into,
+            .assign_var,
+            .@"return",
+            .@"break",
+            .@"continue",
+            .cast,
+            => false,
         };
     }
 };
