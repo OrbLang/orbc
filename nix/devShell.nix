@@ -1,13 +1,11 @@
 { pkgs, ... }:
 pkgs.mkShellNoCC {
-  packages = [
+  packages = with pkgs; [
     #(pkgs.callPackage ./zig_0_15_1.nix {})
-    pkgs.zig_0_14
-    pkgs.zsh
+    zig_0_14
   ];
 
   shellHook = ''
     echo -e "---------DEVSHELL---------\\n\\n"
-    exec zsh
   '';
 }
