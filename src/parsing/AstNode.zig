@@ -103,6 +103,17 @@ pub const AstNodeInner = union(enum) {
         spell: *AstNode,
         params: []AstNode,
     },
+    /// Index into a value, e.g. `foo[2]`
+    index_into: struct {
+        variable: *AstNode,
+        index: *AstNode,
+    },
+    /// Assign an already created variable
+    assign_var: struct {
+        variable: *AstNode,
+        valie: *AstNode,
+    },
+    /// Declare a new variable, and possibly give it a value
     decl_var: struct {
         ident: []const u21,
         is_const: bool,
